@@ -10,9 +10,9 @@
     <script type="text/javascript" src="https://unpkg.com/vis-network@latest/peer/umd/vis-network.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/vis-network/styles/vis-network.min.css" /> -->
 
-    <script type="text/javascript" src="../libs/vis-data.min.js"></script>
-    <script type="text/javascript" src="../libs/vis-network.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../libs/vis-network.min.css" />
+    <script type="text/javascript" src="libs/vis-data.min.js"></script>
+    <script type="text/javascript" src="libs/vis-network.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libs/vis-network.min.css" />
 </head>
 
 <body onload="onLoad()">
@@ -184,10 +184,10 @@
                 return;
             }
                     
-            scriptClass.src = `../data/${selectedCategory}/${specName}_class.js`;
+            scriptClass.src = `data/${selectedCategory}/${specName}_class.js`;
             scriptClass.onload = () => {
                 const scriptEventMap = document.createElement('script');
-                scriptEventMap.src = `../data/${selectedCategory}/${specName}.js`;
+                scriptEventMap.src = `data/${selectedCategory}/${specName}.js`;
                 scriptEventMap.onload = () => {
                     initializeSimulation(specName);
                 };
