@@ -206,11 +206,11 @@ h3 {
     margin-left: auto;
     position:relative;
     margin-right:auto;
-    z-index: 1000; /* Ensure it stays on top */
+    z-index: 1000; 
 }
 
 
-/* Self-loop container */
+
 .self-loop-container {
     display: flex;
     flex-direction: column;
@@ -225,62 +225,60 @@ h3 {
     
     }
 
-    /* Event list container */
     .event-list-container {
         border: 2px solid black;
         margin-top: 30px;
         margin-left: auto;
         margin-right: auto;
         margin-bottom:-20px;
-            padding-bottom: 20px; /* Adds space after all items */
+            padding-bottom: 20px; 
 
         border-radius: 10px 10px 20px 20px;
         z-index:0;
         padding: 8px;
-        padding-bottom: 25px; /* Adds space after all items */
+        padding-bottom: 25px; 
 
         text-align: center;
 
-        position: relative; /* Necessary for positioning the arrow */
+        position: relative; 
     }
     
-/* Add a bigger downward arrow at the bottom-right */
+
 .event-list-container::after {
-    content: ""; /* Empty content for pseudo-element */
+    content: ""; 
     position: absolute;
-    bottom: 12px; /* Adjust further down */
-    right: -9px; /* Align with bottom-right corner */
+    bottom: 12px; 
+    right: -9px; 
     width: 0;
     height: 0;
     z-index:0;
-    border-left: 8px solid transparent; /* Left triangle edge */
-    border-right: 8px solid transparent; /* Right triangle edge */
-    border-top: 15px solid black; /* Upward arrowhead (color of the arrow) */
+    border-left: 8px solid transparent; 
+    border-right: 8px solid transparent; 
+    border-top: 15px solid black; 
 }
 
 
-/* Add an upward arrow at the top-right */
+
 .event-list-container::before {
-    content: ""; /* Empty content for pseudo-element */
+    content: ""; 
     position: absolute;
-    bottom: 12px; /* Adjust further down */
-    left: -9px; /* Align with bottom-right corner */
+    bottom: 12px; 
+    left: -9px;
     width: 0;
     height: 0;
     z-index: 0;
-    border-left: 8px solid transparent; /* Left triangle edge */
-    border-right: 8px solid transparent; /* Right triangle edge */
-    border-bottom: 15px solid black; /* Upward arrowhead (color of the arrow) */
+    border-left: 8px solid transparent; 
+    border-right: 8px solid transparent;
+    border-bottom: 15px solid black; 
 }
 
 
-    /* Individual event item */
     .event-item {
     padding: 3px;
     margin-bottom: 5px;
     font-size: 14px;
     z-index:0;
     text-align: center;
-    user-select: none; /* Disable text selection */
+    user-select: none; 
     color: black;
     }

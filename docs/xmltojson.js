@@ -78,7 +78,6 @@ function parseCIFXML(xmi) {
             }
         }
 
-        // Use JSON.stringify to log the monitors array
         console.log(JSON.stringify(monitors, null, 2));
 
 
@@ -91,7 +90,6 @@ function parseCIFXML(xmi) {
             const isInitial = location.querySelector("initials") !== null;
             const isMarked = location.querySelector("markeds") !== null;
         
-            // Instead of just storing the locationName, store automatonName.locationName
             locationMap[locationId] = `${automatonName}.${locationName}`;
             console.log(locationMap)
 
@@ -102,14 +100,13 @@ function parseCIFXML(xmi) {
                 marked: isMarked
             });
 
-            // Parse edges for each location
+
             const edgeElements = location.getElementsByTagName("edges");
             for (let edge of edgeElements) {
                 const targetLocation = edge.getAttribute("target") || locationId;
                 const eventElement = edge.querySelector("events event");
                 const eventRef = eventElement ? eventElement.getAttribute("event") : null;
 
-                // Parse guard using a recursive function and pass locationMap
                 const guardElement = edge.querySelector("guards");
                 const parsedGuard = parseGuard(guardElement, variables, locationMap);
 
@@ -131,12 +128,11 @@ function parseCIFXML(xmi) {
                         const valueType = valueElement.getAttribute("xmi:type");
 
                         if (valueType === "expressions:IntExpression") {
-                            // Handle simple integer expression
+
                             value = valueElement.getAttribute("value") ||
                                 valueElement.querySelector("type")?.getAttribute("lower"); // Fallback
                             updateExpression = `${variableName} := ${value}`;
                         } else if (valueType === "expressions:BinaryExpression") {
-                            // Handle binary expressions
                             operator = valueElement.getAttribute("operator");
 
                             const leftOperand = valueElement.querySelector("left");
@@ -195,24 +191,23 @@ function parseGuard(guardElement, variables, locationMap) {
 
     const guardType = guardElement.getAttribute("xmi:type");
 
-    // Handle location expressions
-    // Handle location expressions
+
     if (guardType === "expressions:LocationExpression") {
         const locationId = guardElement.getAttribute("location");
 
-        // Now this gives something like "button.Pushed"
+
         const qualifiedLocationName = locationMap[locationId];
         return {
             expression: `${qualifiedLocationName}`
         };
     }
 
-    // If guardElement itself can have an operator
+
     const operator = guardElement.getAttribute("operator");
     const leftElement = guardElement.querySelector(":scope > left");
     const rightElement = guardElement.querySelector(":scope > right");
 
-    // If we have a conjunction operator, we need to handle it recursively
+
     if (operator === "Conjunction") {
         const leftGuard = parseGuard(leftElement, variables, locationMap);
         const rightGuard = parseGuard(rightElement, variables, locationMap);
@@ -224,7 +219,7 @@ function parseGuard(guardElement, variables, locationMap) {
             expression: `(${leftGuard.expression}) && (${rightGuard.expression})`
         };
     } else {
-        // Handle simple comparisons
+
         const leftVar = leftElement?.getAttribute("variable");
         const leftVal = leftElement?.getAttribute("value");
         const leftName = variables[leftVar]?.name || leftVar || leftVal;

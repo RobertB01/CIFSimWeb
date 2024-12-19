@@ -29,7 +29,7 @@ function drawAutomaton(automaton, container) {
         console.log(`Automaton ${automaton.name} has only self-loops.`);
     }
 
-    // Store this information globally so highlightCurrentState() can access it
+
     if (!window.automatonProperties) window.automatonProperties = {};
     window.automatonProperties[automaton.name] = { hasOnlySelfLoops };
 
@@ -91,7 +91,6 @@ function drawAutomaton(automaton, container) {
     const automatonContainer = document.createElement("div");
     automatonContainer.className = "automaton-container";
 
-    // Base size adjustments; these may be overridden if only self-loops exist
     automatonContainer.style.width = `${350 + automaton.locations.length * 40}px`;
     automatonContainer.style.height = `200px`;
 
@@ -118,7 +117,7 @@ function drawAutomaton(automaton, container) {
 
             monitordisplay.append(
                 Object.assign(document.createElement("img"), {
-                    src: "monitor-icon.png", // Replace with your PNG path
+                    src: "monitor-icon.png", 
                     alt: "Monitor Icon",
                     className: "monitor-icon"
                 }),
@@ -142,25 +141,22 @@ function drawAutomaton(automaton, container) {
     container.appendChild(automatonContainer);
 
     if (hasOnlySelfLoops) {
-        networkContainer.style.display = "none"; // Hide the network visualization
+        networkContainer.style.display = "none"; 
 
-        // Create event list container
         const eventListContainer = document.createElement("div");
         eventListContainer.className = "event-list-container";
         eventListContainer.id = `eventListContainer_${automaton.name}`;
 
         let maxTextWidth = 0;
 
-        // Loop through edges and add event items
         automaton.edges.forEach(edge => {
             const event = automaton.events.find(e => e.id === edge.event);
             const eventName = event?.name || "Unnamed Event";
 
             const eventItem = document.createElement("div");
-            eventItem.className = "event-item"; // Class for styling
+            eventItem.className = "event-item"; 
             eventItem.textContent = eventName;
 
-            // Attach data attribute for later reference
             eventItem.setAttribute('data-event-label', eventName);
             eventItem.setAttribute('data-automaton-name', automaton.name);
 
@@ -179,7 +175,6 @@ function drawAutomaton(automaton, container) {
             `;
             eventItem.title = tooltipContent;
 
-            // Temporarily append to measure width
             document.body.appendChild(eventItem);
             const textWidth = eventItem.offsetWidth;
             maxTextWidth = Math.max(maxTextWidth, textWidth);
@@ -191,7 +186,7 @@ function drawAutomaton(automaton, container) {
         const nodeRect = document.createElement("div");
         const numEvents = automaton.edges.length;
 
-        nodeRect.className = "node-rect"; // Class for styling
+        nodeRect.className = "node-rect"; 
         nodeRect.textContent = "";
 
         eventListContainer.style.width = `${maxTextWidth + 50}px`;
@@ -200,7 +195,6 @@ function drawAutomaton(automaton, container) {
         automatonContainer.appendChild(eventListContainer);
         automatonContainer.appendChild(nodeRect);
 
-        // Adjust the container size based on content
         automatonContainer.style.width = `${maxTextWidth + 150}px`;
         
         automatonContainer.style.height = `${numEvents * 25 + 150}px`;
@@ -261,17 +255,15 @@ function updateVariableDisplay() {
             return variable.name.startsWith(`${automatonName}_`) && variable.name !== `${automatonName}_`;
         });
 
-        // Build a multi-line string of variables
         let variableText = "";
         variables.forEach((variable, index) => {
             let variableName = variable.name.replace(`${automatonName}_`, "").replace("_", "");
             variableText += `${variableName} = ${variable.value}`;
             if (index < variables.length - 1) {
-                variableText += "\n"; // Add a new line for the next variable
+                variableText += "\n"; 
             }
         });
 
-        // Create a div that preserves whitespace so that line breaks are shown
         const variableItem = document.createElement("div");
         variableItem.style.whiteSpace = "pre";
         variableItem.textContent = variableText;
@@ -332,7 +324,6 @@ function highlightCurrentState() {
                 nodes.update({ id: currentNode.id, color: { background: "lime" } });
 
                 if (!hasOnlySelfLoops) {
-                    // Normal automaton highlighting of edges
                     const originatingEdges = edges.get({
                         filter: edge => edge.from === currentNode.id
                     });
@@ -390,12 +381,12 @@ function highlightCurrentState() {
                         }
                     });
                 } else {
-                    // For automata with only self-loops, highlight events in the event list container
+                   
                     const eventListContainer = document.getElementById(`eventListContainer_${automatonName}`);
                     if (eventListContainer) {
                         const eventItems = eventListContainer.querySelectorAll('.event-item');
                         eventItems.forEach(eventItem => {
-                            // Reset style
+                            
                             eventItem.style.backgroundColor = "";
                             eventItem.style.color = "";
                             const eventLabel = eventItem.getAttribute('data-event-label');
@@ -409,7 +400,7 @@ function highlightCurrentState() {
                             if (isAvailable) {
                                 eventItem.style.backgroundColor = "#00990a";
                                 eventItem.style.color = "black";
-                                eventItem.style.padding = "2px 10px"; // Add more padding for highlight
+                                eventItem.style.padding = "2px 10px"; 
                             } else {
                                 eventItem.style.backgroundColor = "#910000";
                                 eventItem.style.color = "white";
@@ -417,7 +408,7 @@ function highlightCurrentState() {
                             }
                         });
 
-                        // Add double-click handler for events (once)
+                        
                         if (!eventListContainer.dataset.dblclickAttached) {
                             eventListContainer.dataset.dblclickAttached = "true";
                             eventListContainer.addEventListener('dblclick', function (evt) {
