@@ -184,10 +184,10 @@
                 return;
             }
                     
-            scriptClass.src = `data/${selectedCategory}/${specName}_class.js`;
+            scriptClass.src = `docs/data/${selectedCategory}/${specName}_class.js`;
             scriptClass.onload = () => {
                 const scriptEventMap = document.createElement('script');
-                scriptEventMap.src = `data/${selectedCategory}/${specName}.js`;
+                scriptEventMap.src = `docs/data/${selectedCategory}/${specName}.js`;
                 scriptEventMap.onload = () => {
                     initializeSimulation(specName);
                 };
