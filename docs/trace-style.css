@@ -1,8 +1,4 @@
-/* =============================================================================
-   Overlay Container
-   ============================================================================= */
 
-/* Trace Overlay Styles: Positioned absolutely within the right panel */
 #traceOverlay {
     position: absolute;
     top: 0;
@@ -10,17 +6,12 @@
     width: 100%;
     height: 100%;
     background: white;
-    box-sizing: border-box; /* include padding in width/height */
+    box-sizing: border-box; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     overflow: scroll;
     z-index: 2000;
 }
 
-/* =============================================================================
-   Table Layout
-   ============================================================================= */
-
-/* Table layout for the trace overlay */
 .trace-table {
     border-collapse: collapse;
     table-layout: auto;
@@ -36,11 +27,6 @@
     vertical-align: middle;
 }
 
-/* =============================================================================
-   Header and Bold Text Styles
-   ============================================================================= */
-
-/* Bold headers for header row and first cell of event/automaton rows */
 .trace-header-row th,
 .trace-event-row td:first-child,
 .trace-automaton-row td:first-child {
@@ -48,7 +34,6 @@
     text-align: left;
 }
 
-/* Sticky header rows for trace header and event rows */
 .trace-header-row,
 .trace-event-row {
     background-color: #e0e0e0;
@@ -57,8 +42,6 @@
     z-index: 2;
 }
 
-/* Specifically for the first cell of automaton rows (automaton names),
-   enforce a high z-index so they remain on top when scrolling */
 .trace-automaton-row td:first-child {
     background-color: #e0e0e0;
     position: sticky;
@@ -66,7 +49,6 @@
     z-index: 1000;
 }
 
-/* Additional header/event cell styling */
 .trace-header-row th,
 .trace-event-row .event-cell {
     text-align: center;
@@ -74,31 +56,25 @@
     padding-right: 20px;
     padding-bottom: 2px;
     position: relative;
-    left: -80px; /* Adjust this value if needed */
+    left: -80px; 
 }
 
-/* =============================================================================
-   Trace Cells and Pseudo-Elements
-   ============================================================================= */
-
-/* Cells for each step */
 .trace-location {
-    position: relative; /* allows positioning of pseudo-elements */
+    position: relative; 
 }
 
-/* Draw a horizontal line behind each cell */
+
 .trace-location::before {
     content: "";
     position: absolute;
-    top: 56%; /* positions the line in the middle vertically */
+    top: 56%;
     left: 0;
     right: 0;
-    border-top: 2px solid black;  /* the horizontal line */
-    transform: translateY(-50%);  /* adjust if needed */
-    z-index: 0;    /* places it behind the text */
+    border-top: 2px solid black;  
+    transform: translateY(-50%);  
+    z-index: 0;  
 }
 
-/* Specific adjustments for automaton rows */
 .trace-automaton-row td.trace-location:nth-child(2)::before {
     left: 50%;
     width: 50%;
@@ -109,7 +85,6 @@
     width: 50%;
 }
 
-/* Vertical dashed line added to automaton rows */
 .trace-automaton-row td.trace-location::after {
     content: "";
     position: absolute;
@@ -119,12 +94,6 @@
     border-left: 2px dashed #ccc;
     z-index: -1;
 }
-
-/* =============================================================================
-   Content Elements (Ovals, Guard Checks, Event Cells)
-   ============================================================================= */
-
-/* Ensure cell content appears above the background lines */
 .location-oval,
 .guard-checks,
 .event-cell {
@@ -135,43 +104,36 @@ border-right: 1px solid rgb(177, 177, 177);
     z-index: 1;
 }
 
-/* Styling for oval-shaped locations */
 .location-oval {
     display: inline-block;
-    padding: 3px 15px;      /* Adjust horizontal/vertical padding as needed */
+    padding: 3px 15px;   
     min-height: 18px;
     border: 1px solid #0c0c0c;
-    border-radius: 50px;    /* Increase this value for a more oval appearance */
+    border-radius: 50px;   
     text-align: center;
     background-color: white;
 }
 
-/* Special styling for ovals that have been "last drawn" */
+
 .location-oval.last-drawn {
-    background-color: lime; /* Only the circle gets the lime background */
+    background-color: lime; 
 }
 
-/* Add a right arrow after every cell except the first one */
+
 .trace-automaton-row td.trace-location:not(:nth-child(1)) .location-oval::before {
     content: "→";
     position: absolute;
-    right: 100%; /* places it immediately to the left of the oval */
+    right: 100%; 
     top: 50%;
-    transform: translate(-5px, -50%);  /* adjust horizontal gap if needed */
+    transform: translate(-5px, -50%);  
     font-size: 30px;
     font-weight: bold;
 }
 
-/* Last cell: color background lime */
 .trace-location.last-location {
     background-color: lime;
 }
 
-/* =============================================================================
-   Special Event Cell Styles
-   ============================================================================= */
-
-/* Styling for uncontrollable event cells with diagonal stripes */
 .event-cell.uncontrollable {
     background-image: repeating-linear-gradient(
         -45deg,
@@ -180,12 +142,10 @@ border-right: 1px solid rgb(177, 177, 177);
         #fff 3px,
         #fff 6px
     );
-    color: black; /* Ensure text contrasts against the black stripes */
+    color: black;
 
 }
 
-
-/* Add left/right borders only for event cells */
 .event-cell {
     position: relative;
     border-left: 1px solid grey;
@@ -193,17 +153,16 @@ border-right: 1px solid rgb(177, 177, 177);
     z-index: 1;
 }
 
-/* Base cell styling for header and event rows */
+
 .trace-header-row th,
 .trace-event-row td {
-  position: relative; /* Required for positioning pseudo-elements */
+  position: relative; 
   padding: 3px;
   text-align: center;
   vertical-align: middle;
-  border: none; /* Remove any default borders */
+  border: none; 
 }
 
-/* Create a left border only for header and event row cells */
 .trace-header-row th::before,
 .trace-event-row td::before {
   content: "";
@@ -215,7 +174,7 @@ border-right: 1px solid rgb(177, 177, 177);
   background: grey;
 }
 
-/* Create a right border only for header and event row cells */
+
 .trace-header-row th::after,
 .trace-event-row td::after {
   content: "";

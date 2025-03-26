@@ -23,74 +23,21 @@
 <body onload="onLoad()">
   <div id="specSelection" style="display: none;">
     <!-- <h2>Select CIF Specification</h2> -->
-    <h3>CIF distributions: Benchmarks</h3>
-    <div class="specButtons">
-      <div id="benchmarkButtons">
-        <!-- <button onclick="selectSpecification('adas', 'benchmarks')">ADAS</button> -->
-        <button onclick="selectSpecification('adas_synthesized', 'benchmarks')">ADAS Synthesized</button>
-        <button onclick="selectSpecification('agv_transformed', 'benchmarks')">AGV</button>
-        <button onclick="selectSpecification('agv_synthesized', 'benchmarks')">AGV Synthesized</button>
-        <button onclick="selectSpecification('all_stations_transformed', 'benchmarks')">Festo</button>
-        <!-- <button onclick="selectSpecification('bridge_plant', 'benchmarks')">Bridge Plant</button> -->
-        <!-- <button onclick="selectSpecification('bridge_synthesized', 'benchmarks')">Bridge Synthesized</button> -->
-        <!-- <button onclick="selectSpecification('cluster_tool', 'benchmarks')">Cluster Tool</button> -->
-        <!-- <button onclick="selectSpecification('cluster_tool_synthesized', 'benchmarks')">Cluster Tool Synthesized</button> -->
-        <!-- <button onclick="selectSpecification('dining_philosophers', 'benchmarks')">Dining Philosophers</button> -->
-        <button onclick="selectSpecification('dining_philosophers_synthesized', 'benchmarks')">Dining Philosophers Synthesized</button>
-        <!-- <button onclick="selectSpecification('festo_synthesized', 'benchmarks')">Festo Synthesized</button> -->
-        <button onclick="selectSpecification('multi_agent_formation_transformed', 'benchmarks')">Multi Agent Formation</button>
-        <button onclick="selectSpecification('multi_agent_formation_synthesized', 'benchmarks')">Multi Agent Formation Synthesized</button>
-        <button onclick="selectSpecification('production_cell', 'benchmarks')">Production Cell</button>
-        <button onclick="selectSpecification('production_cell_synthesized', 'benchmarks')">Production Cell Synthesized</button>
-        <!-- <button onclick="selectSpecification('sudoku', 'benchmarks')">Sudoku</button> -->
-        <button onclick="selectSpecification('swarm_aggregation', 'benchmarks')">Swarm Aggregation</button>
-        <button onclick="selectSpecification('swarm_aggregation_synthesized', 'benchmarks')">Swarm Aggregation Synthesized</button>
-        <button onclick="selectSpecification('swarm_clustering_transformed', 'benchmarks')">Swarm Clustering</button>
-        <button onclick="selectSpecification('swarm_clustering_synthesized', 'benchmarks')">Swarm Clustering Synthesized</button>
-        <button onclick="selectSpecification('themepark_transformed', 'benchmarks')">Themepark</button>
-        <button onclick="selectSpecification('themepark_synthesized', 'benchmarks')">Themepark Synthesized</button>
-        <!-- <button onclick="selectSpecification('waterway_lock', 'benchmarks')">Waterway Lock</button> -->
-        <!-- <button onclick="selectSpecification('waterway_lock_synthesized', 'benchmarks')">Waterway Lock Synthesized</button> -->
-      </div>
-    </div>
 
+    
     <br /><br />
-    <h3>CIF distributions: Examples</h3>
-    <div class="specButtons">
-      <div id="exampleButtons">
-        <button onclick="selectSpecification('button_lamp', 'examples')">Button lamp</button>
-        <button onclick="selectSpecification('fifo_plants', 'examples')">Fifo Plants</button>
-        <button onclick="selectSpecification('fifo_manually_modeled_supervisor', 'examples')">Fifo Manually Modeled Supervisor</button>
-      </div>
-    </div>
-    <h3>Eerste heijenoordtunnel</h3>
+    <div id="survey-class">
+    <h3>Survey models</h3>
     <div class="specButtons">
       <div id="testsButtons">
-        <button onclick="selectSpecification('EHT', 'rijkswaterstaat')">Eerste heijenoordtunnel</button>
+        <button onclick="selectSpecification('dev', 'tests')">Model 1: Washing machine</button><br />
+        <button onclick="selectSpecification('reconfigurable_machine_tool_modeling_error', 'tests')">Model 2: Machine Tool</button><br >
+        <button onclick="selectSpecification('three_dining_philosopher', 'tests')">Model 3: Three dining philosophers</button><br />
+        <button onclick="selectSpecification('themapark_plants_requirements_ctrlsys_processed', 'tests')">Model 4: Themepark</button>
+
       </div>
     </div>
-    <br /><br />
-    <h3>Tests</h3>
-    <div class="specButtons">
-      <div id="testsButtons">
-        <button onclick="selectSpecification('dining_philosophers', 'tests')">Dining Philosophers</button>
-        <button onclick="selectSpecification('synchro_producer_consumer', 'tests')">Producer consumer synchronization</button>
-        <button onclick="selectSpecification('lamp_counter', 'tests')">Lamp counter</button>
-        <button onclick="selectSpecification('washing_machine_simple', 'tests')">Washing Machine Simple</button>
-        <button onclick="selectSpecification('nondeterminism', 'tests')">Coin toss (example of no support for nondeterminism)</button>
-        <button onclick="selectSpecification('atp_plants_and_requirements_ctrlsys', 'tests')">ATP system synthesized</button>
-        <button onclick="selectSpecification('conveyerbelt', 'tests')">Conveyor Belt</button>
-        <button onclick="selectSpecification('machine_tool_with_simulator', 'tests')">Machine Tool w/ simulator</button>
-        <button onclick="selectSpecification('largest_automata', 'tests')">Largest automata (benchmarks & Rijkswaterstaat)</button>
-        <button onclick="selectSpecification('reconfigurable_machine_tool_modeling_error', 'tests')">Machine Tool w/ error</button>
-        <button onclick="selectSpecification('themapark_plants_requirements_ctrlsys_processed', 'tests')">Themepark selfmade</button>
-        <button onclick="selectSpecification('three_dining_philosopher', 'tests')">Three dining philosophers</button>
-        <button onclick="selectSpecification('dev', 'tests')">Dev</button>
-      </div>
-    </div>
-    <br /><br />
-    <b>Select CIF File (Todo)</b>
-    <input type="file" id="cifFile" accept=".cif" />
+</div>
   </div>
 
   <div class="controls" id="controlsDiv" style="visibility: hidden;">
@@ -125,7 +72,7 @@
       <select style="width:100%" id="automatonDropdown"></select>
       <button  onclick="addSelectedAutomaton()">Add</button>
       <button  onclick="addAllSynth()">Add all from synth/req.</button>
-      <!-- New "Add All" button -->
+
       <button style=" border:2px solid darkred;" onclick="removeAllAutomata()">Remove All</button>
 
     </div>
@@ -136,17 +83,15 @@
     <label>
       <input type="checkbox" id="traceCheckbox" /> <b>Trace overlay</b>
     </label>
-    <br />
-    <label>
-      <input type="checkbox" style="margin-left:20px;" id="colorsCheckbox" /> <b>Tree display</b>
+    <label style="visibility: hidden; height:0px">
+      <input type="checkbox" style="margin-left:20px;" id="colorsCheckbox" /> 
+    </label>
+    <label style="visibility: hidden;  height:0px">
+      <input type="checkbox" style="margin-left:20px;" id="sumCheckbox" /> 
     </label>
     <br />
-    <label>
-      <input type="checkbox" style="margin-left:20px;" id="sumCheckbox" /> <b>Availability sum</b>
-    </label>
-    <br /><br />
-    <b>Trace:</b>
-    <div class="trace">
+    <b style="margin-top:-30px">Trace:</b>
+    <div class="trace"  >
       <pre id="traceOutput">Waiting...</pre>
     </div>
   </div>
@@ -178,7 +123,7 @@
     let restrictionList = [];
     let selectedYellowEvent = "none";
     let eventEvalationChecked = false;
-    let restrictionOverlayChecked = false; // flag to add "sup" only once
+    let restrictionOverlayChecked = false; // flag to add "sup"
     let automataTree;
     const automatonNodes = {};
     const automatonEdges = {};
@@ -272,7 +217,7 @@
     renderSelectedAutomata();
   }
 
-  // Assign automatonNames globally so multi-graph.js can access it.
+  // Assign automatonNames globally.
   window.automatonNames = parsedData.automata.map(automaton => automaton.name);
 
       const graphContainer = document.getElementById("graph");
@@ -285,7 +230,7 @@
       createEventButtons();
       updateState();
 
-      // Populate the automaton dropdown now that parsedData is available
+      //  automaton dropdown
       populateAutomatonDropdown();
 
       parsedData.automata.forEach(automaton => {
@@ -455,7 +400,7 @@
       clearLog();
       updateState();
       initializeComplexTrace();
-        // Reset edge labels to their original (trim any added suffixes)
+    // Reset edge labels to their original
       
     }
 
@@ -511,9 +456,9 @@
       document.getElementById("stop-random-events").disabled = true;
     }
 
-    // --- AUTOMATON RESTRICTION OVERLAY FUNCTIONS ---
+    // --- AUTOMATON RESTRICTIO ---
 
-    // Populate the dropdown excluding automata already in the restriction list.
+    //
     function populateAutomatonDropdown() {
       const dropdown = document.getElementById("automatonDropdown");
       dropdown.innerHTML = "";
@@ -529,7 +474,7 @@
       }
     }
 
-    // Adds the selected automaton to the restriction list.
+    // Adds the selected automato
     function addSelectedAutomaton() {
       const dropdown = document.getElementById("automatonDropdown");
       const automatonName = dropdown.value;
@@ -544,7 +489,7 @@
       highlightCurrentState();
     }
 
-    // Remove a single automaton from the restriction list.
+    // Remove a single automaton
     function removeAutomaton(index) {
       const automatonDiv = document.getElementById(`${restrictionList[index]}-div`);
       restrictionList.splice(index, 1);
@@ -557,14 +502,14 @@
     }
 
     function removeAllAutomata() {
-  // Iterate over all automata to remove the purple border.
+
   window.automatonNames.forEach(name => {
     const automatonDiv = document.getElementById(`${name}-div`);
     if (automatonDiv) {
       automatonDiv.classList.remove("automaton-container-purple");
     }
   });
-  // Clear the restriction list.
+  // Clear  restriction list
   restrictionList = [];
   renderSelectedAutomata();
   updateAutomataClasses();
@@ -572,7 +517,7 @@
 }
 
 
-    // Existing function: add all automata from "synth" if not already added.
+
     function addAllSynth() {
   if (parsedData && parsedData.automata) {
     parsedData.automata.forEach(automaton => {
@@ -609,7 +554,6 @@
 });
 
 
-    // --- END AUTOMATON RESTRICTION FUNCTIONS ---
   </script>
 
   <!-- VISUALISATIE-->

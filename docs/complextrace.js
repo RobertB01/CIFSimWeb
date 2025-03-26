@@ -1,10 +1,10 @@
-// ---------- Global Variables ----------
-let colorRows = false;  // Global flag for background colors.
-let maxEventsPossible = 0; // Global: maximum total events possible (computed from initial step)
 
-// ---------- Helper: Order Automata Based on Tree Structure ----------
+let colorRows = false;  
+let maxEventsPossible = 0; 
+
+
 function getAutomataOrder() {
-  // Returns an array of objects { name, depth } in depth-first order (skipping the root node)
+  
   let order = [];
   function traverse(node, depth) {
     order.push({ name: node.name, depth: depth });
@@ -18,7 +18,7 @@ function getAutomataOrder() {
   return order;
 }
 
-// Helper to find a node in the automata tree by name.
+
 function findAutomataNode(node, name) {
   if (node.name === name) return node;
   for (let child of node.children) {
@@ -28,8 +28,8 @@ function findAutomataNode(node, name) {
   return null;
 }
 
-// Helper: Get the tree path (for textual tree drawing).
-// Returns an array of objects { node, isLast } from the automataTree root down to the target.
+
+
 function getNodePath(root, targetName) {
   if (!root) return null;
   for (let i = 0; i < root.children.length; i++) {
@@ -45,7 +45,7 @@ function getNodePath(root, targetName) {
   return null;
 }
 
-// ---------- Existing Code (unchanged) ----------
+
 let previousEvents;
 function initializeComplexTrace() {
   previousEvents = new Set(availableEvents);
@@ -74,8 +74,8 @@ function initializeComplexTrace() {
       eventAvailability: eventAvailability
     };
   });
-  // Compute the maximum possible events from the initial step.
-  // (Alternatively, you could compute this dynamically over complexTrace.)
+  
+  
   maxEventsPossible = parsedData.totalEdgesOverall;
   complexTrace.push(initialStep);
 }
@@ -118,12 +118,12 @@ function getEventName(edge, automaton) {
 function computeChanges() {
   let changes = {};
   const lastStep = complexTrace[complexTrace.length - 1];
-  //console.log("Computing changes for step", complexTrace.length);
+  
   
   let currentEvents = new Set(availableEvents);
   let addedEvents = availableEvents.filter(e => !previousEvents.has(e));
   let removedEvents = Array.from(previousEvents).filter(e => !currentEvents.has(e));
-  //console.log("Global added events:", addedEvents, "removed events:", removedEvents);
+  
   previousEvents = currentEvents;
   
   parsedData.automata.forEach(automaton => {
@@ -135,32 +135,32 @@ function computeChanges() {
     } catch (e) {
       currentLocation = " ";
     }
-    //console.log(`Automaton ${automatonName}: currentLocation = ${currentLocation}`);
+    
     
     let newChange = {};
     
-    // Always compute eventAvailability for the current location:
+    
     let locObj = automaton.locations.find(loc => loc.name === currentLocation);
     if (locObj) {
       let outgoingEdgeEvents = automaton.edges
         .filter(edge => edge.from === locObj.id)
         .map(edge => getEventName(edge, automaton));
-      //console.log(`Automaton ${automatonName}: outgoingEdgeEvents =`, outgoingEdgeEvents);
+      
       
       let fullAvailability = {};
       outgoingEdgeEvents.forEach(ev => {
          fullAvailability[ev] = availableEvents.indexOf(ev) >= 0;
       });
-      //console.log(`Automaton ${automatonName}: fullAvailability =`, fullAvailability);
+      
       newChange.eventAvailability = fullAvailability;
     } else {
-      //console.log(`Automaton ${automatonName}: no location object found for location "${currentLocation}"`);
+      
     }
     
-    // If location has changed, update it; otherwise, compute markers.
+    
     if (currentLocation !== lastStep.automata[automatonName].location) {
       newChange.location = currentLocation;
-      //console.log(`Automaton ${automatonName}: location changed to "${currentLocation}"`);
+      
     } else if (locObj) {
       let outgoingEdgeEvents = automaton.edges
         .filter(edge => edge.from === locObj.id)
@@ -176,7 +176,7 @@ function computeChanges() {
            added: addedForAutomaton, 
            removed: removedForAutomaton 
          };
-         //console.log(`Automaton "${automatonName}" marker computed: ${marker}`);
+         
       }
     }
     
@@ -185,22 +185,22 @@ function computeChanges() {
     }
   });
   
-  //console.log("Computed Changes:", changes);
+  
   return changes;
 }
 
-// ------------ New: Build the Event Chart Row ------------
+
 function buildEventChartRow() {
   let rowHTML = '<tr class="event-chart-row"><td></td>';
-  // Determine full chart height: 5px per event, capped at 150px.
-  let chartHeight = Math.min(maxEventsPossible * 5, 150);
-  //console.log("Chart full height set to:", chartHeight, "px (maxEventsPossible:", maxEventsPossible, ")");
   
-  // For each step in complexTrace, create a vertical bar.
+  let chartHeight = Math.min(maxEventsPossible * 5, 150);
+  
+  
+  
   complexTrace.forEach((step, stepIndex) => {
     let totalAvailable = 0;
     let totalUnavailable = 0;
-    // Sum over all automata in the step.
+    
     for (let automaton in step.automata) {
       let availObj = step.automata[automaton].eventAvailability || {};
       for (let evt in availObj) {
@@ -211,20 +211,20 @@ function buildEventChartRow() {
         }
       }
     }
-    //console.log(`Step ${stepIndex}: totalAvailable=${totalAvailable}, totalUnavailable=${totalUnavailable}`);
     
-    // Compute segment heights relative to maxEventsPossible using chartHeight.
+    
+    
     let greenHeight = (totalAvailable / maxEventsPossible) * chartHeight;
     let redHeight = (totalUnavailable / maxEventsPossible) * chartHeight;
     let greyHeight = chartHeight - (greenHeight + redHeight);
     
-    // Create a bar container for this step.
+    
     let barContainer = document.createElement("div");
-    // Use flex with column-reverse so that the first child appears at the bottom.
+    
     barContainer.style.display = "flex";
     barContainer.style.flexDirection = "column-reverse";
     
-    // Create segments.
+    
     let greenDiv = document.createElement("div");
     greenDiv.style.height = greenHeight + "px";
     greenDiv.style.backgroundColor = "#00A300";
@@ -237,7 +237,7 @@ function buildEventChartRow() {
     greyDiv.style.height = greyHeight + "px";
     greyDiv.style.backgroundColor = "lightgrey";
     
-    // Append segments in order: green (bottom), red (middle), grey (top).
+    
     barContainer.appendChild(greenDiv);
     barContainer.appendChild(redDiv);
     barContainer.appendChild(greyDiv);
@@ -250,24 +250,24 @@ function buildEventChartRow() {
   return rowHTML;
 }
 
-// ------------ Updated buildTraceOverlayHTML with Integrated Event Chart Row ------------
+
 function buildTraceOverlayHTML() {
   let html = '<table class="trace-table">';
   
-  // If the sum chart toggle is on, add the event chart row.
+  
   if (document.getElementById("sumCheckbox").checked) {
     html += buildEventChartRow();
   }
   
-  // Header row for trace steps.
+  
   html += '<tr class="trace-header-row">';
-  // (No merged automata column in this table; the automata names are shown in rows below.)
+  
   for (let i = 0; i < complexTrace.length; i++) {
     html += `<th>${i}</th>`;
   }
   html += '</tr>';
   
-  // Event row.
+  
   html += '<tr class="trace-event-row">';
   html += '<td></td>';
   for (let i = 0; i < complexTrace.length; i++) {
@@ -284,7 +284,7 @@ function buildTraceOverlayHTML() {
   }
   html += '</tr>';
   
-  // Build rows for each automaton.
+  
   let automataOrder = getAutomataOrder();
   automataOrder.forEach(item => {
     let automatonName = item.name;
@@ -293,7 +293,7 @@ function buildTraceOverlayHTML() {
     let alignment = "";
     
     if (colorRows) {
-      // Build a tree-style prefix using Unicode branch characters.
+      
       let prefix = "";
       let path = getNodePath(automataTree, automatonName);
       if (path) {
@@ -312,7 +312,7 @@ function buildTraceOverlayHTML() {
       alignment = "right";
     }
     
-    // Get node for color.
+    
     let node = (typeof automataTree !== "undefined") ? findAutomataNode(automataTree, automatonName) : null;
     let cellStyle = ` style="text-align: ${alignment};"`;
     if (colorRows && node && node.color) {
@@ -322,7 +322,7 @@ function buildTraceOverlayHTML() {
     html += `<tr class="trace-automaton-row">`;
     html += `<td class="automaton-cell"${cellStyle}>${mergedContent}</td>`;
     
-    // Build remaining cells for trace steps.
+    
     for (let i = 0; i < complexTrace.length; i++) {
       let cellData = complexTrace[i].automata[automatonName];
       let content = "";
@@ -415,14 +415,14 @@ function toggleTraceOverlay() {
   }
 }
 
-// UPDATED toggleColors: now sets colorRows to the checkbox value.
+
 function toggleColors() {
   colorRows = document.getElementById("colorsCheckbox").checked;
   updateTraceOverlay();
 }
 
 function toggleSum() {
-  // When the sum checkbox is toggled, update the overlay so that the event chart row is added/removed.
+  
   updateTraceOverlay();
 }
 
@@ -431,10 +431,10 @@ document.getElementById("colorsCheckbox").addEventListener("change", toggleColor
 document.getElementById("sumCheckbox").addEventListener("change", toggleSum);
 
 function addTraceStep(eventName, eventType) {
-  // Create a deep copy of the last step.
+  
   let lastStep = JSON.parse(JSON.stringify(complexTrace[complexTrace.length - 1]));
   
-  // Remove any previous eventChange marker.
+  
   for (let automaton in lastStep.automata) {
     if (lastStep.automata[automaton].hasOwnProperty('eventChange')) {
       delete lastStep.automata[automaton].eventChange;
@@ -444,27 +444,27 @@ function addTraceStep(eventName, eventType) {
   lastStep.event = { name: eventName, type: eventType };
   let changes = computeChanges();
   
-  // For every automaton, update eventAvailability (and location/markers if computed).
+  
   for (let automaton in changes) {
     if (changes[automaton].hasOwnProperty('eventAvailability')) {
-      //console.log(`Updating ${automaton} eventAvailability:`, changes[automaton].eventAvailability);
+      
       lastStep.automata[automaton].eventAvailability = changes[automaton].eventAvailability;
     }
     if (changes[automaton].hasOwnProperty('location')) {
-      //console.log(`Updating ${automaton} location to: ${changes[automaton].location}`);
+      
       lastStep.automata[automaton].location = changes[automaton].location;
     }
     if (changes[automaton].hasOwnProperty('guardChecks')) {
       lastStep.automata[automaton].guardChecks = changes[automaton].guardChecks;
     }
     if (changes[automaton].hasOwnProperty('eventChange')) {
-      //console.log(`Updating ${automaton} marker: ${changes[automaton].eventChange.marker}`);
+      
       lastStep.automata[automaton].eventChange = changes[automaton].eventChange;
     }
   }
   
   complexTrace.push(lastStep);
   updateTraceOverlay();
-  //console.log("STEP ADDED");
-  //console.log(complexTrace);
+  
+  
 }

@@ -1,28 +1,28 @@
-// --- Tree Node Class ---
+
 class AutomatonNode {
     constructor(data) {
       this.name = data.name;
       this.kind = data.kind;
       this.children = [];
-      this.color = null; // Hex color used for highlighting.
-      this.depth = 0;    // Will be set during tree generation.
+      this.color = null; 
+      this.depth = 0;    
     }
     addChild(child) {
       this.children.push(child);
     }
   }
   
-  // --- Predefined Base Colors (avoid red, lime, and purple) ---
+  
   const baseColors = [
-    "#007BFF", // Blue
-    "#17A2B8", // Cyan
-    "#28A745", // Green
-    "#FD7E14", // Orange
-    "#20C997"  // Teal
+    "#007BFF", 
+    "#17A2B8", 
+    "#28A745", 
+    "#FD7E14", 
+    "#20C997"  
   ];
   
-  // --- Helper Functions for Color Conversion ---
-  // Convert a hex color (e.g. "#007BFF") to an HSL object.
+  
+  
   function hexToHSL(H) {
     let hex = H.replace(/^#/, '');
     if (hex.length === 3) {
@@ -34,7 +34,7 @@ class AutomatonNode {
     let max = Math.max(r, g, b), min = Math.min(r, g, b);
     let h, s, l = (max + min) / 2;
     if (max === min) {
-      h = s = 0; // achromatic
+      h = s = 0; 
     } else {
       let d = max - min;
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -48,7 +48,7 @@ class AutomatonNode {
     return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
   }
   
-  // Convert an HSL (h in degrees, s and l in percentages) to a hex color string.
+  
   function hslToHex(h, s, l) {
     s /= 100;
     l /= 100;
@@ -71,15 +71,15 @@ class AutomatonNode {
     }).join('');
   }
   
-  // Adjust the lightness of a hex color to a target percentage (0–100).
+  
   function adjustLightness(hex, targetLightness) {
     let hsl = hexToHSL(hex);
     return hslToHex(hsl.h, hsl.s, targetLightness);
   }
   
-  // --- Generate Distinct Base Colors for the Root's Children ---
-  // For n ≤ 5, we use a preferred mapping for maximum distinctiveness.
-  // For example, if there are 2 children, choose cyan and orange.
+  
+  
+  
   function generateDistinctBaseColorsForRoot(n) {
     const preferredCombinations = {
       1: [1],
@@ -90,24 +90,24 @@ class AutomatonNode {
     };
     if (n <= 5) {
       const indexes = preferredCombinations[n];
-      // Darken the colors a bit by setting lightness to 80.
+      
       return indexes.map(i => adjustLightness(baseColors[i], 80));
     } else {
-      // For more than 5, fall back to evenly spaced colors and darken them.
+      
       return generateDistinctBaseColors(n).map(color => adjustLightness(color, 80));
     }
   }
   
-  // --- Fallback: Evenly generate distinct colors (if needed) ---
+  
   function generateDistinctBaseColors(n) {
     if (n <= baseColors.length) {
       return baseColors.slice(0, n).map(color => adjustLightness(color, 95));
     }
     const intervals = [
-      { start: 15, end: 45 },   // Orange-ish range
-      { start: 75, end: 105 },  // Greenish range (avoiding bright lime)
-      { start: 135, end: 270 }, // Wide range covering greens to blues
-      { start: 300, end: 345 }  // Avoiding purple
+      { start: 15, end: 45 },   
+      { start: 75, end: 105 },  
+      { start: 135, end: 270 }, 
+      { start: 300, end: 345 }  
     ];
     const totalAllowed = intervals.reduce((sum, seg) => sum + (seg.end - seg.start), 0);
     let colors = [];
@@ -123,14 +123,14 @@ class AutomatonNode {
           target -= segLength;
         }
       }
-      // Using saturation 70 and lightness 95 for a vivid, light base color.
+      
       colors.push(hslToHex(hue, 70, 95));
     }
     return colors;
   }
   
-  // --- Compute Maximum Depth in a Branch ---
-  // Returns the maximum depth (starting with currentDepth for leaf nodes)
+  
+  
   function computeMaxDepth(node, currentDepth = 0) {
     if (node.children.length === 0) return currentDepth;
     let maxDepth = currentDepth;
@@ -141,13 +141,13 @@ class AutomatonNode {
     return maxDepth;
   }
   
-  // --- Assign Colors to a Branch Based on Its Depth ---
-  // For nodes deeper than level 1, linearly interpolate the lightness.
-  // The branch’s base color (at level 1) is taken as the parent’s color.
+  
+  
+  
   function assignBranchColors(node, currentLevel, branchMax, baseHex) {
     let baseHSL = hexToHSL(baseHex);
-    let baseBrightness = baseHSL.l; // e.g. 80 for our root children.
-    let low = Math.max(baseBrightness - 20, 40); // Do not go below 40.
+    let baseBrightness = baseHSL.l; 
+    let low = Math.max(baseBrightness - 20, 40); 
     let brightness;
     if (branchMax === 1) {
       brightness = baseBrightness;
@@ -158,42 +158,42 @@ class AutomatonNode {
     node.children.forEach(child => assignBranchColors(child, currentLevel + 1, branchMax, baseHex));
   }
   
-  // --- Generate Automata Tree with Depth ≤ 4 ---
-  // 1. Attach up to 6 nodes directly as children of the root.
-  // 2. Then attach the remaining nodes only to those whose depth is less than 4.
+  
+  
+  
   function generateAutomataTree(automataList) {
     if (!Array.isArray(automataList) || automataList.length === 0) {
       throw new Error("Invalid input: expected an array of automata.");
     }
     let nodes = automataList.map(auto => new AutomatonNode(auto));
     let root = new AutomatonNode({ name: "Root", kind: "Root" });
-    root.color = "#FFFFFF"; // Root uses a white background.
+    root.color = "#FFFFFF"; 
     root.depth = 0;
     
     const maxDirectChildren = 6;
     const directChildrenCount = Math.min(maxDirectChildren, nodes.length);
-    // Attach first up to 6 nodes as direct children.
+    
     for (let i = 0; i < directChildrenCount; i++) {
       let node = nodes[i];
       node.depth = 1;
       root.addChild(node);
     }
     
-    // Maintain a list of eligible parent nodes (those with depth < 4).
+    
     let eligibleParents = root.children.filter(n => n.depth < 4);
     
-    // Attach the remaining nodes.
+    
     for (let i = directChildrenCount; i < nodes.length; i++) {
       let node = nodes[i];
       if (eligibleParents.length === 0) {
-        // Fallback: attach to root if no eligible parent exists.
+        
         node.depth = 1;
         root.addChild(node);
         eligibleParents.push(node);
       } else {
         let parent = eligibleParents[Math.floor(Math.random() * eligibleParents.length)];
         node.depth = parent.depth + 1;
-        // Ensure maximum depth is 4.
+        
         if (node.depth > 4) {
           node.depth = 1;
           root.addChild(node);
@@ -205,28 +205,28 @@ class AutomatonNode {
       }
     }
     
-    // --- Color Assignment ---
-    // Assign distinct base colors (with lightness 80) to the root's children.
+    
+    
     let distinctColors = generateDistinctBaseColorsForRoot(root.children.length);
     root.children.forEach((child, idx) => {
       child.color = distinctColors[idx];
-      // Compute the maximum depth of this branch (starting at level 1 for the child).
+      
       let branchMax = computeMaxDepth(child, 1);
-      // For all descendants, assign colors based on branch depth.
+      
       child.children.forEach(grandChild => assignBranchColors(grandChild, 2, branchMax, child.color));
     });
     
     return root;
   }
   
-  // --- Print the Tree with Highlighting ---
-  // Prints each node with CSS styling using the assigned background color (with black text).
+  
+  
   function printTree(node, depth = 0) {
     const indent = " ".repeat(depth * 2);
-    console.log(
-      `%c${indent}↳ ${node.name} (${node.kind})`,
-      `background-color: ${node.color}; color: black; padding: 2px;`
-    );
+    //console.log(
+    //  `%c${indent}↳ ${node.name} (${node.kind})`,
+    //  `background-color: ${node.color}; color: black; padding: 2px;`
+    //);
     node.children.forEach(child => printTree(child, depth + 1));
   }
   

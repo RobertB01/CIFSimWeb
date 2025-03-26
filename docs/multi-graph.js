@@ -1,14 +1,14 @@
 function drawAutomaton(automaton, container) {
     const nodes = automaton.locations.map(loc => {
-        // The display label is truncated to 15 characters
+        
         const displayLabel = loc.name 
             ? (loc.name.length > 15 ? loc.name.slice(0, 15) + "..." : loc.name)
             : "   ";
     
         return {
             id: loc.id,
-            label: "\u00A0" + displayLabel + "\u00A0",       // Visible label in the graph
-            fullName: loc.name,        // Store the untruncated name here
+            label: "\u00A0" + displayLabel + "\u00A0",       
+            fullName: loc.name,        
             color: { border: "black" },
             borderWidth: 2,
             shape: "ellipse",
@@ -20,7 +20,7 @@ function drawAutomaton(automaton, container) {
     const selfLoopTracker = {};
     const hasOnlySelfLoops = automaton.edges.every(edge => edge.from === edge.to);
 
-    // Store this information globally so highlightCurrentState() can access it
+    
     if (!window.automatonProperties) window.automatonProperties = {};
     window.automatonProperties[automaton.name] = { hasOnlySelfLoops };
     const nodeLoopTracker = {};
@@ -48,28 +48,28 @@ function drawAutomaton(automaton, container) {
                 const crossAutomaton = parsedData.automata.find(a => a.name === edge.eventAutomaton);
                 const crossEvent = crossAutomaton.events.find(e => e.id === edge.event);
                 eventObj = crossEvent;
-                // Prefix the event name with the declaring automaton's name
+                
                 eventName = crossEvent.name || "Unnamed Event";
                 fullyQualifiedName = `${crossAutomaton.name}.${eventName}`;
                 eventName = fullyQualifiedName
-                //console.log("Fully Qualified Name for Cross Automaton:", fullyQualifiedName);
+                
 
                 break;
 
             case 'owned':
-                // Find the event in the current automaton
+                
                 const ownedEvent = automaton.events.find(e => e.id === edge.event);
                 eventObj = ownedEvent;
-                //console.log("Owned Event ID:", edge.event);
-                //console.log("Owned Event:", ownedEvent);
+                
+                
 
                 if (ownedEvent) {
-                    // Use the event name without any prefix
+                    
                     eventName = ownedEvent.name || "Unnamed Event";
                     fullyQualifiedName = `${automaton.name}.${eventName}`;
-                    //console.log("Fully Qualified Name for Owned Event:", fullyQualifiedName);
+                    
                 } else {
-                    // Handle case where owned event is not found
+                    
                     eventName = "Unnamed Event";
                     fullyQualifiedName = "Unnamed Event";
                     console.warn(`Owned event with ID ${edge.event} not found in automaton ${automaton.name}`);
@@ -77,18 +77,18 @@ function drawAutomaton(automaton, container) {
                 break;
 
             case 'global':
-                // Find the event in the global event map
+                
                 const globalEvent = globalEventMap[edge.event];
                 eventObj = globalEvent;
-                //console.log("Global Event ID:", edge.event);
-                //console.log("Global Event:", globalEvent);
+                
+                
 
                 if (globalEvent) {
-                    // Use the event name without any prefix
+                    
                     eventName = globalEvent.name || "Unnamed Event";
                     fullyQualifiedName = eventName;
                 } else {
-                    // Handle case where global event is not found
+                    
                     eventName = "Unnamed Event";
                     fullyQualifiedName = "Unnamed Event";
                     console.warn(`Global event with ID ${edge.event} not found.`);
@@ -96,8 +96,8 @@ function drawAutomaton(automaton, container) {
                 break;
         }
 
-        //console.log("Final Event Name:", fullyQualifiedName);
-        //console.log("eventname", eventName)
+        
+        
 
 
         const isControllable = eventObj?.controllable === true;
@@ -118,10 +118,10 @@ function drawAutomaton(automaton, container) {
             }
 
             
-            // Initialize if necessary
+            
             const categoryKey = edge.controllable ? "controllable" : "uncontrollable";
-            //console.log(categoryKey);
-            // Check if we found first controllable or uncontrollable for *this node*
+            
+            
             if (edge.controllable && !nodeLoopTracker[edge.from].foundFirstControllable) {
                 nodeLoopTracker[edge.from].foundFirstControllable = true;
                 isPrimarySelfLoop = true;
@@ -132,7 +132,7 @@ function drawAutomaton(automaton, container) {
             }
 
         }
-        //console.log(isPrimarySelfLoop)
+        
         let edgeOptions = {
             id: edge.id,
             from: edge.from,
@@ -180,9 +180,9 @@ function drawAutomaton(automaton, container) {
     });
 
 
-    // Find the maximum number of self-loops for any single location
+    
     const maxSelfLoops = Math.max(...Object.values(selfLoopTracker), 0);
-    //console.log(`Max self-loops per location in automaton ${automaton.name}:`, maxSelfLoops);
+    
 
 
 
@@ -190,7 +190,7 @@ function drawAutomaton(automaton, container) {
     const automatonContainer = document.createElement("div");
     automatonContainer.className = "automaton-container";
 
-    // Base size adjustments; these may be overridden if only self-loops exist
+    
     automatonContainer.style.width = `${150 + automaton.locations.length * 30}px`;
     automatonContainer.style.height = `${161.72 + automaton.locations.length * 20 + maxSelfLoops * 18}px`;
 
@@ -224,7 +224,7 @@ function drawAutomaton(automaton, container) {
 
             monitordisplay.append(
                 Object.assign(document.createElement("img"), {
-                    src: "monitor-icon.png", // Replace with your PNG path
+                    src: "monitor-icon.png", 
                     alt: "Monitor Icon",
                     className: "monitor-icon"
                 }),
@@ -248,16 +248,16 @@ function drawAutomaton(automaton, container) {
     container.appendChild(automatonContainer);
 
     if (hasOnlySelfLoops) {
-        networkContainer.style.display = "none"; // Hide the network visualization
+        networkContainer.style.display = "none"; 
 
-        // Create event list container
+        
         const eventListContainer = document.createElement("div");
         eventListContainer.className = "event-list-container";
         eventListContainer.id = `eventListContainer_${automaton.name}`;
 
         let maxTextWidth = 0;
 
-        // Loop through edges and add event items
+        
         automaton.edges.forEach(edge => {
             let eventName;
 
@@ -265,7 +265,7 @@ function drawAutomaton(automaton, container) {
                 case 'cross-automaton':
                     const crossAutomaton = parsedData.automata.find(a => a.name === edge.eventAutomaton);
                     const crossEvent = crossAutomaton.events.find(e => e.id === edge.event);
-                    // Prefix the event name with the declaring automaton's name
+                    
 
                     eventName = crossEvent.name || "Unnamed Event";
                     let fullyQualifiedName = `${crossAutomaton.name}.${eventName}`;
@@ -289,10 +289,10 @@ function drawAutomaton(automaton, container) {
            
 
             const eventItem = document.createElement("div");
-            eventItem.className = "event-item"; // Class for styling
+            eventItem.className = "event-item"; 
             eventItem.textContent = eventName;
 
-            // Attach data attribute for later reference
+            
             eventItem.setAttribute('data-event-label', eventName);
             eventItem.setAttribute('data-automaton-name', automaton.name);
 
@@ -313,7 +313,7 @@ function drawAutomaton(automaton, container) {
             
             eventItem.title = tooltipContent;
 
-            // Temporarily append to measure width
+            
             document.body.appendChild(eventItem);
             const textWidth = eventItem.offsetWidth;
             maxTextWidth = Math.max(maxTextWidth, textWidth);
@@ -325,7 +325,7 @@ function drawAutomaton(automaton, container) {
         const nodeRect = document.createElement("div");
         const numEvents = automaton.edges.length;
 
-        nodeRect.className = "node-rect"; // Class for styling
+        nodeRect.className = "node-rect"; 
         nodeRect.textContent = "";
 
         eventListContainer.style.width = `${maxTextWidth + 50}px`;
@@ -334,7 +334,7 @@ function drawAutomaton(automaton, container) {
         automatonContainer.appendChild(eventListContainer);
         automatonContainer.appendChild(nodeRect);
 
-        // Adjust the container size based on content
+        
         automatonContainer.style.width = `${maxTextWidth + 150}px`;
         
         automatonContainer.style.height = `${numEvents * 25 + 150}px`;
@@ -342,7 +342,7 @@ function drawAutomaton(automaton, container) {
             const clickedItem = evt.target.closest('.event-item');
             if (clickedItem) {
                 const eventLabel = clickedItem.getAttribute('data-event-label');
-                console.log("Event item clicked:", eventLabel); // debug log
+                console.log("Event item clicked:", eventLabel); 
                 selectEdgeByLabel(eventLabel, automaton.name);
                 
 
@@ -371,7 +371,7 @@ function drawAutomaton(automaton, container) {
       
 
     
-    // Conditionally add layout/physics based on node count
+    
     if (automaton.locations.length > 10) {
         Object.assign(baseOptions, {
             layout: {},
@@ -381,7 +381,7 @@ function drawAutomaton(automaton, container) {
                 stabilization: { iterations: 100 }
             }
         });
-        // Override the default smooth setting so that edges are straight.
+        
         Object.assign(baseOptions.edges, {
             smooth: false
         });
@@ -404,17 +404,17 @@ function drawAutomaton(automaton, container) {
 
 
 
-    // Attach the listener on the newly created network
-    // network.on("selectEdge", (params) => {
-    //     console.log("selectEdge event fired!", params);
-    //     const clickedEdgeId = params.edges[0];
-    //     // automatonEdges[automaton.name] is the Vis DataSet:
-    //     const clickedEdge = automatonEdges[automaton.name].get(clickedEdgeId);
-    //     if (clickedEdge && !clickedEdge.isPrimarySelfLoop && clickedEdge.isSelfLoop) {
-    //         network.unselectAll();  // Clears all selections
+    
+    
+    
+    
+    
+    
+    
+    
 
-    //     }
-    // });
+    
+    
     automatonNetworks[automaton.name] = network;
     attachEdgeSelectionListener(network, automaton.name);
 
@@ -427,26 +427,26 @@ function drawAutomaton(automaton, container) {
 
 function updateVariableDisplay() {
     automatonNames.forEach(automatonName => {
-        //console.log(automatonName);
+        
         const variableDisplay = document.querySelector(`#variableDisplay_${automatonName}`);
         variableDisplay.innerHTML = "";
         const variables = getVariables(spec).filter(variable => 
             variable.name.startsWith(`${automatonName}_`) && variable.name !== `${automatonName}_`
         );
         
-        //console.log(variables)
+        
 
-        // Build a multi-line string of variables
+        
         let variableText = "";
         variables.forEach((variable, index) => {
             let variableName = variable.name.replace(`${automatonName}_`, "").replace("_", "");
             variableText += `${variableName} = ${variable.value}`;
             if (index < variables.length - 1) {
-                variableText += "\n"; // Add a new line for the next variable
+                variableText += "\n"; 
             }
         });
 
-        // Create a div that preserves whitespace so that line breaks are shown
+        
         const variableItem = document.createElement("div");
         variableItem.style.whiteSpace = "pre";
         variableItem.textContent = variableText;
@@ -480,12 +480,12 @@ function highlightCurrentState() {
         const network = automatonNetworks[automatonName];
         
         if (nodes && edges && network) {
-            // Reset node colors
+            
             nodes.forEach(node => {
                 nodes.update({ id: node.id, color: { background: "white" } });
             });
 
-            // Reset edge colors
+            
             edges.forEach(edge => {
                 const isSelfLoop = (edge.from === edge.to) || (edge.selfReference !== undefined);
 
@@ -536,7 +536,7 @@ function highlightCurrentState() {
                     originatingEdges.forEach(edge => {
                         const edgeFQN = edge.full_label || edge.label;
                         const isAvailable = availableEvents.some(ev => ev === edgeFQN);
-                        // If the event is in purpleEvents, override red colors with purple.
+                        
 
 
 
@@ -549,18 +549,18 @@ function highlightCurrentState() {
 
                             if (restrictionOverlayChecked && purpleEvents && purpleEvents.some(item => item.eventName === edgeFQN)) {
                                 if (!isAvailable) {
-                                    // Override color and shadow for blocked edges
+                                    
                                     newColor = "purple";
                                     shadowSettings.color = "purple";
                                     let newLabel = baseLabel;
 
-                                    // Add blocking icon and count only if restrictionList has multiple items
+                                    
                                     if (restrictionList.length > 1) {
                                         const purpleItem = purpleEvents.find(item => item.eventName === edgeFQN);
                                         newLabel = `${baseLabel} 🚫${purpleItem.blockCount}`;
                                     }
 
-                                    // Update the edge only if the label or color has changed
+                                    
                                     if (edge.label !== newLabel || edge.color !== newColor) {
                                         edges.update({ 
                                             id: edge.id, 
@@ -571,7 +571,7 @@ function highlightCurrentState() {
                                     }
                                 }
                             } else {
-                                // Reset the label to baseLabel if conditions are not met
+                                
                                 if (edge.label !== baseLabel) {
                                     edges.update({ id: edge.id, label: baseLabel });
                                 }
@@ -625,7 +625,7 @@ function highlightCurrentState() {
                         }
                     });
                 } else {
-                    // For automata with only self-loops, update the event list container...
+                    
                     const eventListContainer = document.getElementById(`eventListContainer_${automatonName}`);
                     if (eventListContainer) {
                         const eventItems = eventListContainer.querySelectorAll('.event-item');
@@ -639,7 +639,7 @@ function highlightCurrentState() {
                                 eventItem.style.color = "white";
                                 eventItem.style.padding = "2px 10px";
                             } else {
-                                // Check if this event should be purple instead of red
+                                
                                 if (purpleEvents && purpleEvents.some(item => item.eventName === eventLabel)) {
                                     eventItem.style.backgroundColor = "purple";
                                     eventItem.style.color = "white";
@@ -721,7 +721,7 @@ function selectEdgeByLabel(eventLabel, automatonName) {
     const edges = automatonEdges[automatonName];
     const network = automatonNetworks[automatonName];
     if (edges && network) {
-        // Find matching edge(s)
+        
         const matchingEdges = edges.get({
             filter: edge => {
                 const label = edge.full_label || edge.label;
@@ -730,7 +730,7 @@ function selectEdgeByLabel(eventLabel, automatonName) {
         });
         if (matchingEdges && matchingEdges.length > 0) {
             const edgeIds = matchingEdges.map(e => e.id);
-            // Select the matching edge(s) in the vis network
+            
             network.selectEdges(edgeIds);
             const selectedEdge = automatonEdges[automatonName].get(edgeIds[0]);
             if (selectedEdge) {
