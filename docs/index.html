@@ -1,624 +1,454 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CIF Simulator</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="trace-style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIF Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- <script type="text/javascript" src="https://unpkg.com/vis-data@latest/peer/umd/vis-data.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network@latest/peer/umd/vis-network.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/vis-network/styles/vis-network.min.css" /> -->
 
-  <script type="text/javascript" src="https://unpkg.com/vis-data@latest/peer/umd/vis-data.min.js"></script>
-  <script src="https://unpkg.com/vis-network@9.1.4/standalone/umd/vis-network.min.js"></script>
-
-
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/vis-network/styles/vis-network.min.css" />
-
-  <!-- <script type="text/javascript" src="../libs/vis-data.min.js"></script>
-  <script type="text/javascript" src="../libs/vis-network.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="../libs/vis-network.min.css" /> -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="text/javascript" src="libs/vis-data.min.js"></script>
+    <script type="text/javascript" src="libs/vis-network.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libs/vis-network.min.css" />
 </head>
 
 <body onload="onLoad()">
-  <div id="specSelection" style="display: none;">
-    <!-- <h2>Select CIF Specification</h2> -->
-    <h3>CIF distributions: Benchmarks</h3>
-    <div class="specButtons">
-      <div id="benchmarkButtons">
-        <!-- <button onclick="selectSpecification('adas', 'benchmarks')">ADAS</button> -->
-        <button onclick="selectSpecification('adas_synthesized', 'benchmarks')">ADAS Synthesized</button>
-        <button onclick="selectSpecification('agv_transformed', 'benchmarks')">AGV</button>
-        <button onclick="selectSpecification('agv_synthesized', 'benchmarks')">AGV Synthesized</button>
-        <button onclick="selectSpecification('all_stations_transformed', 'benchmarks')">Festo</button>
-        <!-- <button onclick="selectSpecification('bridge_plant', 'benchmarks')">Bridge Plant</button> -->
-        <!-- <button onclick="selectSpecification('bridge_synthesized', 'benchmarks')">Bridge Synthesized</button> -->
-        <!-- <button onclick="selectSpecification('cluster_tool', 'benchmarks')">Cluster Tool</button> -->
-        <!-- <button onclick="selectSpecification('cluster_tool_synthesized', 'benchmarks')">Cluster Tool Synthesized</button> -->
-        <!-- <button onclick="selectSpecification('dining_philosophers', 'benchmarks')">Dining Philosophers</button> -->
-        <button onclick="selectSpecification('dining_philosophers_synthesized', 'benchmarks')">Dining Philosophers Synthesized</button>
-        <!-- <button onclick="selectSpecification('festo_synthesized', 'benchmarks')">Festo Synthesized</button> -->
-        <button onclick="selectSpecification('multi_agent_formation_transformed', 'benchmarks')">Multi Agent Formation</button>
-        <button onclick="selectSpecification('multi_agent_formation_synthesized', 'benchmarks')">Multi Agent Formation Synthesized</button>
-        <button onclick="selectSpecification('production_cell', 'benchmarks')">Production Cell</button>
-        <button onclick="selectSpecification('production_cell_synthesized', 'benchmarks')">Production Cell Synthesized</button>
-        <!-- <button onclick="selectSpecification('sudoku', 'benchmarks')">Sudoku</button> -->
-        <button onclick="selectSpecification('swarm_aggregation', 'benchmarks')">Swarm Aggregation</button>
-        <button onclick="selectSpecification('swarm_aggregation_synthesized', 'benchmarks')">Swarm Aggregation Synthesized</button>
-        <button onclick="selectSpecification('swarm_clustering_transformed', 'benchmarks')">Swarm Clustering</button>
-        <button onclick="selectSpecification('swarm_clustering_synthesized', 'benchmarks')">Swarm Clustering Synthesized</button>
-        <button onclick="selectSpecification('themepark_transformed', 'benchmarks')">Themepark</button>
-        <button onclick="selectSpecification('themepark_synthesized', 'benchmarks')">Themepark Synthesized</button>
-        <!-- <button onclick="selectSpecification('waterway_lock', 'benchmarks')">Waterway Lock</button> -->
-        <!-- <button onclick="selectSpecification('waterway_lock_synthesized', 'benchmarks')">Waterway Lock Synthesized</button> -->
-      </div>
+
+    <div id="specSelection" style="display: none;">
+        <!-- <h2>Select CIF Specification</h2> -->
+        <h3>CIF distributions: Benchmarks</h3>
+        <div class="specButtons">
+            <div id="benchmarkButtons">
+                <!-- <button onclick="selectSpecification('adas', 'benchmarks')">ADAS</button> -->
+                <button onclick="selectSpecification('adas_synthesized', 'benchmarks')">ADAS Synthesized</button>
+                <button onclick="selectSpecification('agv_transformed', 'benchmarks')">AGV</button>
+                <button onclick="selectSpecification('agv_synthesized', 'benchmarks')">AGV Synthesized</button>
+                <button onclick="selectSpecification('all_stations_transformed', 'benchmarks')">Festo</button>
+                <!-- <button onclick="selectSpecification('bridge_plant', 'benchmarks')">Bridge Plant</button> -->
+                <!-- <button onclick="selectSpecification('bridge_synthesized', 'benchmarks')">Bridge Synthesized</button> -->
+                <!-- <button onclick="selectSpecification('cluster_tool', 'benchmarks')">Cluster Tool</button> -->
+                <!-- <button onclick="selectSpecification('cluster_tool_synthesized', 'benchmarks')">Cluster Tool Synthesized</button> -->
+                <!-- <button onclick="selectSpecification('dining_philosophers', 'benchmarks')">Dining Philosophers</button> -->
+                <button onclick="selectSpecification('dining_philosophers_synthesized', 'benchmarks')">Dining Philosophers Synthesized</button>
+                <!-- <button onclick="selectSpecification('festo_synthesized', 'benchmarks')">Festo Synthesized</button> -->
+                <button onclick="selectSpecification('multi_agent_formation_transformed', 'benchmarks')">Multi Agent Formation</button>
+                <button onclick="selectSpecification('multi_agent_formation_synthesized', 'benchmarks')">Multi Agent Formation Synthesized</button>
+                <button onclick="selectSpecification('production_cell', 'benchmarks')">Production Cell</button>
+                <button onclick="selectSpecification('production_cell_synthesized', 'benchmarks')">Production Cell Synthesized</button>
+                <!-- <button onclick="selectSpecification('sudoku', 'benchmarks')">Sudoku</button> -->
+                <button onclick="selectSpecification('swarm_aggregation', 'benchmarks')">Swarm Aggregation</button>
+                <button onclick="selectSpecification('swarm_aggregation_synthesized', 'benchmarks')">Swarm Aggregation Synthesized</button>
+                <button onclick="selectSpecification('swarm_clustering_transformed', 'benchmarks')">Swarm Clustering</button>
+                <button onclick="selectSpecification('swarm_clustering_synthesized', 'benchmarks')">Swarm Clustering Synthesized</button>
+                <button onclick="selectSpecification('themepark_transformed', 'benchmarks')">Themepark</button>
+                <button onclick="selectSpecification('themepark_synthesized', 'benchmarks')">Themepark Synthesized</button>
+                <!-- <button onclick="selectSpecification('waterway_lock', 'benchmarks')">Waterway Lock</button> -->
+                <!-- <button onclick="selectSpecification('waterway_lock_synthesized', 'benchmarks')">Waterway Lock Synthesized</button> -->
+            </div>
+        </div>
+
+        <br  /> <br /> 
+        <h3>CIF distributions: Examples</h3>
+        <div class="specButtons">
+            <div id="exampleButtons">
+                <button onclick="selectSpecification('button_lamp', 'examples')">Button lamp</button>
+                <button onclick="selectSpecification('fifo_plants', 'examples')">Fifo Plants</button>
+                <button onclick="selectSpecification('fifo_manually_modeled_supervisor', 'examples')">Fifo Manually Modeled Supervisor</button>
+
+            </div>
+        </div>
+
+        <br  /> <br />
+        <h3>Tests</h3>
+
+        <div class="specButtons">
+            <div id="testsButtons">
+                <button onclick="selectSpecification('dining_philosophers', 'tests')">Dining Philosophers</button>
+                <button onclick="selectSpecification('synchro_producer_consumer', 'tests')">Producer consumer synchronization</button>
+                <button onclick="selectSpecification('lamp_counter', 'tests')">Lamp counter</button>
+                <button onclick="selectSpecification('washing_machine_simple', 'tests')">Washing Machine Simple</button>
+                <button onclick="selectSpecification('nondeterminism', 'tests')">Coin toss (example of no support for nondeterminism)</button>
+                <button onclick="selectSpecification('atp_plants_and_requirements_ctrlsys', 'tests')">ATP system synthesized</button>
+                <button onclick="selectSpecification('conveyerbelt', 'tests')">Conveyor Belt</button>
+                <button onclick="selectSpecification('dev', 'tests')">Dev</button>
+            </div>
+        </div>
+        <br /><br />
+        <b>Select CIF File (Todo)</b>
+        <input type="file" id="cifFile" accept=".cif">
+    </div>
+    
+
+    <div class="controls" id="controlsDiv" style="visibility: hidden;">
+
+        <button onclick="clearSelectedSpec()">change specification</button>
+        <div id="event-controls">
+            <b>Edges</b>
+            <select id="events-dropdown">
+                <option value="" disabled selected>Select edge</option>
+            </select>
+            <br /><br />
+            <button id="execute-event" onclick="executeSelectedEvent()">Execute</button>
+            <button id="undo-event" onclick="undoEvent()">Undo</button>
+            <button id="resetSimulation" onclick="reset()">Reset Simulation</button>
+        </div>
+        <b>Random executor</b><br />
+        <button id="start-random-events" onclick="startRandomEvents()">Start Random</button>
+        <button id="stop-random-events" onclick="stopRandomEvents()" disabled>Stop Random</button>
+        <label for="speed-slider">Speed: </label>
+        <input type="range" id="speed-slider" min="0.2" max="4" step="0.2" value="0.5">
+        <span id="speed-value">1</span>
+        <b>State:</b>
+        <div class="output">
+            <pre id="consoleOutput">Waiting...</pre>
+        </div>
+        <b>Trace:</b>
+        <div class="trace">
+            <pre id="traceOutput">Waiting...</pre>
+        </div>
     </div>
 
-    <br /><br />
-    <h3>CIF distributions: Examples</h3>
-    <div class="specButtons">
-      <div id="exampleButtons">
-        <button onclick="selectSpecification('button_lamp', 'examples')">Button lamp</button>
-        <button onclick="selectSpecification('fifo_plants', 'examples')">Fifo Plants</button>
-        <button onclick="selectSpecification('fifo_manually_modeled_supervisor', 'examples')">Fifo Manually Modeled Supervisor</button>
-      </div>
+    <div class="right-panel" id="rightPanel" style="visibility: hidden;">
+        <div class="graph-area" id="graph"></div>
     </div>
-    <h3>Eerste heijenoordtunnel</h3>
-    <div class="specButtons">
-      <div id="testsButtons">
-        <button onclick="selectSpecification('EHT', 'rijkswaterstaat')">Eerste heijenoordtunnel</button>
-      </div>
-    </div>
-    <br /><br />
-    <h3>Tests</h3>
-    <div class="specButtons">
-      <div id="testsButtons">
-        <button onclick="selectSpecification('dining_philosophers', 'tests')">Dining Philosophers</button>
-        <button onclick="selectSpecification('synchro_producer_consumer', 'tests')">Producer consumer synchronization</button>
-        <button onclick="selectSpecification('lamp_counter', 'tests')">Lamp counter</button>
-        <button onclick="selectSpecification('washing_machine_simple', 'tests')">Washing Machine Simple</button>
-        <button onclick="selectSpecification('nondeterminism', 'tests')">Coin toss (example of no support for nondeterminism)</button>
-        <button onclick="selectSpecification('atp_plants_and_requirements_ctrlsys', 'tests')">ATP system synthesized</button>
-        <button onclick="selectSpecification('conveyerbelt', 'tests')">Conveyor Belt</button>
-        <button onclick="selectSpecification('machine_tool_with_simulator', 'tests')">Machine Tool w/ simulator</button>
-        <button onclick="selectSpecification('largest_automata', 'tests')">Largest automata (benchmarks & Rijkswaterstaat)</button>
-        <button onclick="selectSpecification('reconfigurable_machine_tool_modeling_error', 'tests')">Machine Tool w/ error</button>
-        <button onclick="selectSpecification('themapark_plants_requirements_ctrlsys_processed', 'tests')">Themepark selfmade</button>
-        <button onclick="selectSpecification('three_dining_philosopher', 'tests')">Three dining philosophers</button>
-        <button onclick="selectSpecification('dev', 'tests')">Dev</button>
-      </div>
-    </div>
-    <br /><br />
-    <b>Select CIF File (Todo)</b>
-    <input type="file" id="cifFile" accept=".cif" />
-  </div>
 
-  <div class="controls" id="controlsDiv" style="visibility: hidden;">
-    <div id="selectedSpecDisplay"></div>
-    <button onclick="clearSelectedSpec()">change specification</button>
-    <div id="event-controls">
-      <b>Edges</b>
-      <select id="events-dropdown">
-        <option value="" disabled selected>Select edge</option>
-      </select>
-      <br /><br />
-      <button id="execute-event" onclick="executeSelectedEvent()">Execute</button>
-      <button id="undo-event" onclick="undoEvent()">Undo</button>
-      <button id="resetSimulation" onclick="reset()">Reset Simulation</button>
-    </div>
-    <b>Random executor</b><br />
-    <button id="start-random-events" onclick="startRandomEvents()">Start Random</button>
-    <button id="stop-random-events" onclick="stopRandomEvents()" disabled>Stop Random</button>
-    <label for="speed-slider">Speed: </label>
-    <input type="range" id="speed-slider" min="0.2" max="10" step="0.2" value="0.5" />
-    <span id="speed-value">1</span>
-    <b>State:</b>
-    <div class="output">
-      <pre id="consoleOutput">Waiting...</pre>
-    </div>
-    <div id="restrictionManager">
-      <label>
-        <input type="checkbox" id="myCheckbox" /> <b id="sup-overlay-text">Restriction overlay</b>
-      </label>
-      <ul id="selectedAutomataList"></ul>
-      
-      <select style="width:100%" id="automatonDropdown"></select>
-      <button  onclick="addSelectedAutomaton()">Add</button>
-      <button  onclick="addAllSynth()">Add all from synth/req.</button>
-      <!-- New "Add All" button -->
-      <button style=" border:2px solid darkred;" onclick="removeAllAutomata()">Remove All</button>
+    <!-- PARSING -->
+    <script src="xmltojson.js"></script>
+    <script src="utils.js" id="utilsFile"></script>
 
-    </div>
-    <label>
-      <input type="checkbox" id="guardCheckbox" /> <b id="guard-overlay-text">Event evaluation</b>
-    </label>
-    <br />
-    <label>
-      <input type="checkbox" id="traceCheckbox" /> <b>Trace overlay</b>
-    </label>
-    <br />
-    <label>
-      <input type="checkbox" style="margin-left:20px;" id="colorsCheckbox" /> <b>Tree display</b>
-    </label>
-    <br />
-    <label>
-      <input type="checkbox" style="margin-left:20px;" id="sumCheckbox" /> <b>Availability sum</b>
-    </label>
-    <br /><br />
-    <b>Trace:</b>
-    <div class="trace">
-      <pre id="traceOutput">Waiting...</pre>
-    </div>
-  </div>
+    <!-- UITVOERING -->
+    <script>
+        let spec;
+        let xmlFileName;
+        let xmlFile;
+        let eventFunctionMap = {};
+        let trace = [];
 
-  <div class="right-panel" id="rightPanel" style="visibility: hidden;">
-    <div class="graph-area" id="graph"></div>
-    <div class="guard-area" id="guardAreaId"></div>
-    <div id="traceOverlay" style="display:none;">d</div>
-    <div id="eventChartContainer"></div>
-  </div>
+        const automatonNodes = {};
+        const automatonEdges = {};
+        const automatonNetworks = {};
 
-  <!-- PARSING -->
-  <script src="xmltojson.js"></script>
-  <script src="utils.js" id="utilsFile"></script>
+        function onLoad() {
+            const selectedSpec = getSelectedSpec();
+            const selectedCategory = getSelectedCategory();
+            if (selectedSpec) {
 
-  <!-- UITVOERING -->
-  <script>
-    let spec;
-    let xmlFileName;
-    let xmlFile;
-    let eventFunctionMap = {};
-    let trace = [];
-    let parsedData;
-    let locationBools = [];
-    let complexTrace = [];
-    let yellowAutomata = [];
-    let availableEvents = [];
-    let purpleEvents = [];
-    let restrictionList = [];
-    let selectedYellowEvent = "none";
-    let eventEvalationChecked = false;
-    let restrictionOverlayChecked = false; // flag to add "sup" only once
-    let automataTree;
-    const automatonNodes = {};
-    const automatonEdges = {};
-    const automatonNetworks = {};
-    const globalEventMap = {};
-    const globalEventNameMap = {}; // for controllable/uncontrollable checking
+                document.getElementById('specSelection').style.display = 'none';
+                
+                document.getElementById('controlsDiv').style.visibility = 'visible';
+                document.getElementById('rightPanel').style.visibility = 'visible';
 
-    const gaurdDiv = document.getElementById("guardAreaId");
-    const guardcheckboxtext = document.getElementById("guard-overlay-text");
-
-    function onLoad() {
-      const selectedSpec = getSelectedSpec();
-      const selectedCategory = getSelectedCategory();
-      if (selectedSpec) {
-        document.getElementById("specSelection").style.display = "none";
-        document.getElementById("selectedSpecDisplay").innerText = `${selectedSpec} (${selectedCategory})`;
-        document.getElementById("controlsDiv").style.visibility = "visible";
-        document.getElementById("rightPanel").style.visibility = "visible";
-        loadScriptsForSpec(selectedSpec);
-      } else {
-        document.getElementById("specSelection").style.display = "block";
-      }
-    }
-
-    function selectSpecification(specName, specCategory) {
-      if (specName) {
-        setSelectedSpec(specName, specCategory);
-        location.reload();
-      } else {
-        alert("Please select a specification.");
-      }
-    }
-
-    function setSelectedSpec(specName, specCategory) {
-      localStorage.setItem("selectedSpec", specName);
-      localStorage.setItem("selectedCategory", specCategory);
-    }
-
-    function getSelectedSpec() {
-      return localStorage.getItem("selectedSpec");
-    }
-
-    function getSelectedCategory() {
-      return localStorage.getItem("selectedCategory");
-    }
-
-    function clearSelectedSpec() {
-      localStorage.removeItem("selectedSpec");
-      localStorage.removeItem("selectedCategory");
-      location.reload();
-    }
-
-    function loadScriptsForSpec(specName) {
-      const selectedCategory = getSelectedCategory();
-      if (!selectedCategory) {
-        console.error("Category not selected.");
-        return;
-      }
-      const scriptClass = document.createElement("script");
-      scriptClass.src = `../data/${selectedCategory}/${specName}_class.js`;
-      scriptClass.onload = () => {
-        const scriptEventMap = document.createElement("script");
-        scriptEventMap.src = `../data/${selectedCategory}/${specName}.js`;
-        scriptEventMap.onload = () => {
-          initializeSimulation(specName);
-        };
-        document.head.appendChild(scriptEventMap);
-      };
-      document.head.appendChild(scriptClass);
-    }
-
-    function initializeSimulation(specName) {
-  spec = new spec_class();
-  initializeEventFunctionMap();
-
-  xmlFileName = "xml_" + specName;
-  xmlFile = eval(xmlFileName);
-  parsedData = parseCIFXML(xmlFile);
-  console.log("XML is parsed");
-  console.log(parsedData);
-
-  if (parsedData && parsedData.automata) {
-    parsedData.automata.forEach(automaton => {
-      const isSynthOrReq = automaton.kind === "Supervisor" || automaton.kind === "Requirement";
-      if ((isSynthOrReq) && 
-          !restrictionList.includes(automaton.name)) {
-        restrictionList.push(automaton.name);
-      }
-    });
-
-    renderSelectedAutomata();
-  }
-
-  // Assign automatonNames globally so multi-graph.js can access it.
-  window.automatonNames = parsedData.automata.map(automaton => automaton.name);
-
-      const graphContainer = document.getElementById("graph");
-      graphContainer.innerHTML = "";
-      reset();
-      parsedData.automata.forEach(automaton => {
-        drawAutomaton(automaton, graphContainer);
-      });
-
-      createEventButtons();
-      updateState();
-
-      // Populate the automaton dropdown now that parsedData is available
-      populateAutomatonDropdown();
-
-      parsedData.automata.forEach(automaton => {
-        automaton.locations.forEach(location => {
-          const key = `${automaton.name}.${location.name}`;
-          locationBools[key] = false;
-        });
-      });
-      automataTree = generateAutomataTree(parsedData.automata);
-      printTree(automataTree);
-
-      initializeComplexTrace();
-    }
-    function initializeEventFunctionMap() {
-      const sortedEventNames = eventMap;
-      console.log("Event names:", sortedEventNames);
-      sortedEventNames.forEach((eventName, index) => {
-        const execEventFunctionName = `execEdge${index}`;
-        if (typeof spec[execEventFunctionName] === "function") {
-          eventFunctionMap[eventName] = spec[execEventFunctionName].bind(spec);
-        }
-      });
-    }
-
-    function getVariables(spec) {
-      return Object.keys(spec)
-        .filter(key => key.endsWith("_"))
-        .map(key => {
-          const rawValue = spec[key];
-          let formattedValue;
-          if (typeof rawValue === "number") {
-            formattedValue = rawValue;
-          } else if (typeof rawValue === "boolean") {
-            formattedValue = rawValue ? "true" : "false";
-          } else if (typeof rawValue === "symbol") {
-            formattedValue = rawValue.toString();
-          } else {
-            formattedValue = String(rawValue);
-          }
-          return { name: key, value: formattedValue };
-        });
-    }
-
-    function createEventButtons() {
-      const eventsDropdown = document.getElementById("events-dropdown");
-      eventsDropdown.innerHTML = '<option value="" disabled selected>Select edge</option>';
-      const availableEvents = getAvailableEdges(spec);
-      Object.keys(eventFunctionMap).forEach(eventName => {
-        const option = document.createElement("option");
-        option.value = eventName;
-        option.textContent = eventName;
-        if (!availableEvents.includes(eventName)) {
-          option.disabled = true;
-          option.style.color = "grey";
-        }
-        eventsDropdown.appendChild(option);
-      });
-    }
-
-    function getAvailableEdges(spec) {
-      const availableEdges = [];
-      const originalState = saveState(spec);
-      const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(spec));
-      keys.forEach(key => {
-        if (key.startsWith("execEdge") && typeof spec[key] === "function") {
-          const edgeIndex = parseInt(key.replace("execEdge", ""), 10);
-          const eventName = eventMap[edgeIndex];
-          if (eventName) {
-            const executed = spec[key].call(spec);
-            if (executed) {
-              availableEdges.push(eventName);
-              restoreState(spec, originalState);
+                loadScriptsForSpec(selectedSpec);
+            } else {
+                
+                document.getElementById('specSelection').style.display = 'block';
             }
-          }
         }
-      });
-      return availableEdges;
-    }
 
-    function saveState(spec) {
-      const state = {};
-      for (const key of Reflect.ownKeys(spec)) {
-        state[key] = spec[key];
-      }
-      return state;
-    }
-
-    function restoreState(spec, originalState) {
-      for (const key of Reflect.ownKeys(originalState)) {
-        spec[key] = originalState[key];
-      }
-    }
-
-    function executeSelectedEvent() {
-      const eventsDropdown = document.getElementById("events-dropdown");
-      const selectedEvent = eventsDropdown.value;
-      if (selectedEvent && eventFunctionMap[selectedEvent]) {
-        const executed = eventFunctionMap[selectedEvent]();
-        if (executed) {
-          logEvent(selectedEvent);
-          trace.push(selectedEvent);
-          updateState();
-          updateAutomataClasses();
-          updatePurpleOverlay();
-          let eventType = "controllable";
-          addTraceStep(selectedEvent, eventType);
-          createEventButtons(spec);
+        function selectSpecification(specName, specCategory) {
+            if (specName) {
+                setSelectedSpec(specName, specCategory);
+                location.reload(); 
+            } else {
+                alert('Please select a specification.');
+            }
         }
-      } else {
-        alert("Please select a valid event.");
-      }
-    }
 
-    function undoEvent() {
-      if (trace.length === 0) {
-        alert("No events to undo.");
-        return;
-      }
-      trace.pop();
-      updateTrace();
-      spec.reset();
-      trace.forEach(eventName => {
-        if (eventFunctionMap[eventName]) {
-          eventFunctionMap[eventName]();
+        function setSelectedSpec(specName, specCategory) {
+            localStorage.setItem('selectedSpec', specName);
+            localStorage.setItem('selectedCategory', specCategory)
         }
-      });
-      updateState();
-      createEventButtons();
-    }
 
-    function updateState() {
-      const stateDisplay = document.getElementById("consoleOutput");
-      if (typeof spec.getStateText === "function") {
-        stateDisplay.innerText = spec.getStateText();
-      } else {
-        stateDisplay.innerText = "State information not available.";
-      }
-      if (purpleEvents.length > 0) {
-        updatePurpleOverlay();
-      }
-      highlightCurrentState();
-      requestAnimationFrame(() => {
-        updateVariableDisplay();
-      });
-      clearGuardOverlay(); 
-    }
+        function getSelectedSpec() {
+            return localStorage.getItem('selectedSpec');
+        }
 
-    function logEvent(eventName) {
-      const stateDisplay = document.getElementById("consoleOutput");
-      stateDisplay.innerText += `\nEvent Triggered: ${eventName}`;
-    }
+        function getSelectedCategory() {
+            return localStorage.getItem('selectedCategory');
+        }
 
-    function updateTrace() {
-      const traceDisplay = document.getElementById("traceOutput");
-      if (trace.length === 0) {
-        traceDisplay.innerText = "Waiting...";
-      } else {
-        traceDisplay.innerText = trace.join("\n");
-      }
-    }
+        function clearSelectedSpec() {
+            localStorage.removeItem('selectedSpec');
+            localStorage.removeItem('selectedCategory');
+            location.reload();
+        }
 
-    function reset() {
-      if (spec.playing) stop();
-      spec.reset();
-      trace = [];
-      updateTrace();
-      clearLog();
-      updateState();
-      initializeComplexTrace();
-        // Reset edge labels to their original (trim any added suffixes)
-      
-    }
+        function loadScriptsForSpec(specName) {
+            const scriptClass = document.createElement('script');
+            const selectedCategory = getSelectedCategory(); 
+            if (!selectedCategory) {
+                console.error("Category not selected.");
+                return;
+            }
+                    
+            scriptClass.src = `data/${selectedCategory}/${specName}_class.js`;
+            scriptClass.onload = () => {
+                const scriptEventMap = document.createElement('script');
+                scriptEventMap.src = `data/${selectedCategory}/${specName}.js`;
+                scriptEventMap.onload = () => {
+                    initializeSimulation(specName);
+                };
+                document.head.appendChild(scriptEventMap);
+            };
+            document.head.appendChild(scriptClass);
+        }
 
-    function clearLog() {
-      document.getElementById("consoleOutput").innerText = "Waiting...";
-    }
+        function initializeSimulation(specName) {
+            spec = new spec_class();
+            initializeEventFunctionMap();
 
-    function start() {
-      if (!spec.playing) {
-        spec.log("start");
-        spec.start();
-      }
-    }
 
-    function stop() {
-      if (spec.playing) {
-        spec.stop();
-      }
-    }
+            xmlFileName = 'xml_' + specName;
+            xmlFile = eval(xmlFileName);
+            const parsedData = parseCIFXML(xmlFile);
+            console.log("XML is parsed");
+            console.log(parsedData);
+            automatonNames = parsedData.automata.map(automaton => automaton.name);
 
-    let randomEventInterval = null;
-    document.getElementById("speed-slider").addEventListener("input", function () {
-      document.getElementById("speed-value").innerText = this.value;
-    });
+            const graphContainer = document.getElementById("graph");
+            graphContainer.innerHTML = "";
+            reset();
+            parsedData.automata.forEach(automaton => {
+                drawAutomaton(automaton, graphContainer);
+            });
 
-    function startRandomEvents() {
-      const speed = parseFloat(document.getElementById("speed-slider").value);
-      const interval = 1000 / speed;
-      randomEventInterval = setInterval(() => {
-        const availableEvents = getAvailableEdges(spec);
-        if (availableEvents.length > 0) {
-          const randomEvent = availableEvents[Math.floor(Math.random() * availableEvents.length)];
-          if (eventFunctionMap[randomEvent]) {
-            eventFunctionMap[randomEvent]();
-            logEvent(randomEvent);
-            trace.push(randomEvent);
-            updateTrace();
+            createEventButtons();
             updateState();
-            let eventType = "controllable";
-            addTraceStep(randomEvent, eventType);
-            createEventButtons(spec);
-          }
         }
-      }, interval);
-      document.getElementById("start-random-events").disabled = true;
-      document.getElementById("stop-random-events").disabled = false;
-    }
 
-    function stopRandomEvents() {
-      clearInterval(randomEventInterval);
-      randomEventInterval = null;
-      document.getElementById("start-random-events").disabled = false;
-      document.getElementById("stop-random-events").disabled = true;
-    }
+        function initializeEventFunctionMap() {
+            const sortedEventNames = eventMap;
+            console.log("Event names:", sortedEventNames);
 
-    // --- AUTOMATON RESTRICTION OVERLAY FUNCTIONS ---
+            sortedEventNames.forEach((eventName, index) => {
+                const execEventFunctionName = `execEdge${index}`;
+                if (typeof spec[execEventFunctionName] === 'function') {
+                    eventFunctionMap[eventName] = spec[execEventFunctionName].bind(spec);
+                }
+            });
+        }
 
-    // Populate the dropdown excluding automata already in the restriction list.
-    function populateAutomatonDropdown() {
-      const dropdown = document.getElementById("automatonDropdown");
-      dropdown.innerHTML = "";
-      if (parsedData && parsedData.automata) {
-        parsedData.automata.forEach(automaton => {
-          if (!restrictionList.includes(automaton.name)) {
-            const option = document.createElement("option");
-            option.value = automaton.name;
-            option.text = automaton.name;
-            dropdown.appendChild(option);
-          }
+        function getVariables(spec) {
+            return Object.keys(spec)
+                .filter(key => key.endsWith('_')) 
+                .map(key => {
+                    const rawValue = spec[key];
+                    let formattedValue;
+
+
+                    if (typeof rawValue === "number") {
+                        formattedValue = rawValue; 
+                    } else if (typeof rawValue === "boolean") {
+                        formattedValue = rawValue ? "true" : "false"; 
+                    } else if (typeof rawValue === "symbol") {
+                        formattedValue = rawValue.toString(); 
+                    } else {
+                        formattedValue = String(rawValue); 
+                    }
+
+                    return { name: key, value: formattedValue }; 
+                });
+        }
+
+
+
+        function createEventButtons() {
+            const eventsDropdown = document.getElementById('events-dropdown');
+            eventsDropdown.innerHTML = '<option value="" disabled selected>Select edge</option>';
+
+            const availableEvents = getAvailableEdges(spec);
+
+            Object.keys(eventFunctionMap).forEach(eventName => {
+                const option = document.createElement('option');
+                option.value = eventName;
+                option.textContent = eventName;
+
+                if (!availableEvents.includes(eventName)) {
+                    option.disabled = true;
+                    option.style.color = "grey";
+                }
+
+                eventsDropdown.appendChild(option);
+            });
+        }
+
+        function getAvailableEdges(spec) {
+            const availableEdges = [];
+            const originalState = saveState(spec);
+
+            const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(spec));
+            keys.forEach((key) => {
+                if (key.startsWith("execEdge") && typeof spec[key] === "function") {
+                    const edgeIndex = parseInt(key.replace("execEdge", ""), 10);
+                    const eventName = eventMap[edgeIndex];
+
+                    if (eventName) {
+                        const executed = spec[key].call(spec);
+                        if (executed) {
+                            availableEdges.push(eventName);
+                            restoreState(spec, originalState);
+                        }
+                    }
+                }
+            });
+
+            return availableEdges;
+        }
+
+        function saveState(spec) {
+            const state = {};
+            for (const key of Reflect.ownKeys(spec)) {
+                state[key] = spec[key];
+            }
+            return state;
+        }
+
+        function restoreState(spec, originalState) {
+            for (const key of Reflect.ownKeys(originalState)) {
+                spec[key] = originalState[key];
+            }
+        }
+
+        function executeSelectedEvent() {
+            const eventsDropdown = document.getElementById('events-dropdown');
+            const selectedEvent = eventsDropdown.value;
+
+            if (selectedEvent && eventFunctionMap[selectedEvent]) {
+                eventFunctionMap[selectedEvent]();
+                logEvent(selectedEvent);
+                trace.push(selectedEvent);
+                updateTrace();
+                updateState();
+                createEventButtons(spec);
+            } else {
+                alert("Please select a valid event.");
+            }
+        }
+
+        function undoEvent() {
+            if (trace.length === 0) {
+                alert("No events to undo.");
+                return;
+            }
+
+            trace.pop();
+            updateTrace();
+
+            spec.reset();
+            trace.forEach(eventName => {
+                if (eventFunctionMap[eventName]) {
+                    eventFunctionMap[eventName]();
+                }
+            });
+
+            updateState();
+            createEventButtons();
+        }
+
+        function updateState() {
+            const stateDisplay = document.getElementById('consoleOutput');
+            if (typeof spec.getStateText === "function") {
+                stateDisplay.innerText = spec.getStateText();
+            } else {
+                stateDisplay.innerText = "State information not available.";
+            }
+
+            highlightCurrentState();
+            requestAnimationFrame(() => { //wachten op DOM
+                updateVariableDisplay();
+            });
+        }
+
+        function logEvent(eventName) {
+            const stateDisplay = document.getElementById('consoleOutput');
+            stateDisplay.innerText += `\nEvent Triggered: ${eventName}`;
+        }
+
+        function updateTrace() {
+            const traceDisplay = document.getElementById('traceOutput');
+            if (trace.length === 0) {
+                traceDisplay.innerText = 'Waiting...';
+            } else {
+                traceDisplay.innerText = trace.join("\n");
+            }
+        }
+
+        function reset() {
+            if (spec.playing) stop();
+            spec.reset();
+            trace = [];
+            updateTrace();
+            clearLog();
+            updateState();
+        }
+
+        function clearLog() {
+            document.getElementById('consoleOutput').innerText = 'Waiting...';
+        }
+
+        function start() {
+            if (!spec.playing) {
+                spec.log('start');
+                spec.start();
+            }
+        }
+
+        function stop() {
+            if (spec.playing) {
+                spec.stop();
+            }
+        }
+
+
+
+        let randomEventInterval = null;
+
+        document.getElementById('speed-slider').addEventListener('input', function () {
+            document.getElementById('speed-value').innerText = this.value;
         });
-      }
-    }
 
-    // Adds the selected automaton to the restriction list.
-    function addSelectedAutomaton() {
-      const dropdown = document.getElementById("automatonDropdown");
-      const automatonName = dropdown.value;
-      if (automatonName && !restrictionList.includes(automatonName)) {
-        restrictionList.push(automatonName);
-        updateAutomataClasses();
+        function startRandomEvents() {
+            const speed = parseFloat(document.getElementById('speed-slider').value);
+            const interval = 1000 / speed; // to ms
 
-      }
-      renderSelectedAutomata();
-      populateAutomatonDropdown();
-      updatePurpleOverlay();
-      highlightCurrentState();
-    }
+            randomEventInterval = setInterval(() => {
+                const availableEvents = getAvailableEdges(spec);
 
-    // Remove a single automaton from the restriction list.
-    function removeAutomaton(index) {
-      const automatonDiv = document.getElementById(`${restrictionList[index]}-div`);
-      restrictionList.splice(index, 1);
-      automatonDiv.classList.remove("automaton-container-purple");
-      renderSelectedAutomata();
-      updateAutomataClasses();
-      updatePurpleOverlay();
-      highlightCurrentState();
-      populateAutomatonDropdown();
-    }
+                if (availableEvents.length > 0) {
+                    const randomEvent = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+                    if (eventFunctionMap[randomEvent]) {
+                        eventFunctionMap[randomEvent]();
+                        logEvent(randomEvent);
+                        trace.push(randomEvent);
+                        updateTrace();
+                        updateState();
+                        createEventButtons(spec);
+                    }
+                }
+            }, interval);
 
-    function removeAllAutomata() {
-  // Iterate over all automata to remove the purple border.
-  window.automatonNames.forEach(name => {
-    const automatonDiv = document.getElementById(`${name}-div`);
-    if (automatonDiv) {
-      automatonDiv.classList.remove("automaton-container-purple");
-    }
-  });
-  // Clear the restriction list.
-  restrictionList = [];
-  renderSelectedAutomata();
-  updateAutomataClasses();
-  populateAutomatonDropdown();
-}
+            document.getElementById('start-random-events').disabled = true;
+            document.getElementById('stop-random-events').disabled = false;
+        }
+
+        function stopRandomEvents() {
+            clearInterval(randomEventInterval);
+            randomEventInterval = null;
+
+            document.getElementById('start-random-events').disabled = false;
+            document.getElementById('stop-random-events').disabled = true;
+        }
 
 
-    // Existing function: add all automata from "synth" if not already added.
-    function addAllSynth() {
-  if (parsedData && parsedData.automata) {
-    parsedData.automata.forEach(automaton => {
-      const isSynthOrReq = automaton.kind === "Supervisor" || 
-                          automaton.kind === "Requirement"; 
-      if (isSynthOrReq && !restrictionList.includes(automaton.name)) {
-        restrictionList.push(automaton.name);
-      }
-    });
-    updateAutomataClasses();
-    updatePurpleOverlay();
-    highlightCurrentState();
-  }
-  renderSelectedAutomata();
-  populateAutomatonDropdown();
-}
-    function renderSelectedAutomata() {
-      const list = document.getElementById("selectedAutomataList");
-      list.innerHTML = "";
-      restrictionList.forEach((name, index) => {
-        const li = document.createElement("li");
-        li.textContent = name + " ";
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "[X]";
-        removeBtn.style.fontSize = "small";
-        removeBtn.onclick = () => removeAutomaton(index);
-        li.appendChild(removeBtn);
-        list.appendChild(li);
-      });
 
-    }
-    document.getElementById("myCheckbox").addEventListener("change", function () {
-  restrictionOverlayChecked = this.checked;
-});
+    </script>
 
+    <!-- VISUALISATIE-->
+    <script src="multi-graph.js"></script>
 
-    // --- END AUTOMATON RESTRICTION FUNCTIONS ---
-  </script>
-
-  <!-- VISUALISATIE-->
-  <script src="multi-graph.js"></script>
-  <script src="supervisoroverlay.js"></script>
-  <script src="guardevaluator.js"></script>
-  <script src="complextrace.js"></script>
-  <script src="tree-structure.js"></script>
-  <script src="ïnitialnode-overlay.js"></script>
 </body>
 
 </html>

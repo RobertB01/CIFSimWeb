@@ -5,26 +5,23 @@
 class spec_class {
     /** specEnum declaration. It contains the single merged enum from the CIF model. */
     specEnum = Object.freeze({
-        /** Literal "full". */
-        _full: Symbol("full"),
+        /** Literal "air". */
+        _air: Symbol("air"),
 
-        /** Literal "isEmpty". */
-        _isEmpty: Symbol("isEmpty"),
+        /** Literal "ground". */
+        _ground: Symbol("ground"),
 
-        /** Literal "ready". */
-        _ready: Symbol("ready"),
+        /** Literal "hand". */
+        _hand: Symbol("hand"),
 
-        /** Literal "washAt40". */
-        _washAt40: Symbol("washAt40"),
+        /** Literal "heads". */
+        _heads: Symbol("heads"),
 
-        /** Literal "washAt90". */
-        _washAt90: Symbol("washAt90"),
+        /** Literal "tails". */
+        _tails: Symbol("tails"),
 
-        /** Literal "washing40". */
-        _washing40: Symbol("washing40"),
-
-        /** Literal "washing90". */
-        _washing90: Symbol("washing90")
+        /** Literal "unknown". */
+        _unknown: Symbol("unknown")
     })
 
     /** Should execution timing information be provided? */
@@ -53,13 +50,9 @@ class spec_class {
 
     /** The names of all the events. */
     EVENT_NAMES = [
-        "dispense",
-        "insertCoin",
-        "openDoor",
-        "refill",
-        "returnCoin",
-        "select40",
-        "select90"
+        "coin.land",
+        "coin.pick_up",
+        "coin.toss"
     ];
 
 
@@ -97,14 +90,11 @@ class spec_class {
     targetMilli;
 
 
-    /** Discrete variable "coin_collector.coins". */
-    coin_collector_coins_;
+    /** Discrete variable "coin". */
+    coin_;
 
-    /** Discrete variable "detergent_dispenser". */
-    detergent_dispenser_;
-
-    /** Discrete variable "washer". */
-    washer_;
+    /** Discrete variable "outcome". */
+    outcome_;
 
 
     /** SVG output elements. */
@@ -235,20 +225,14 @@ class spec_class {
             // Try to execute an edge for each event.
             var edgeExecuted = false;
 
-            // Event "insertCoin".
+            // Event "coin.land".
             edgeExecuted |= this.execEdge0();
 
-            // Event "refill".
+            // Event "coin.pick_up".
             edgeExecuted |= this.execEdge1();
 
-            // Event "returnCoin".
+            // Event "coin.toss".
             edgeExecuted |= this.execEdge2();
-
-            // Event "select40".
-            edgeExecuted |= this.execEdge3();
-
-            // Event "select90".
-            edgeExecuted |= this.execEdge4();
 
             // Stop if no edge was executed.
             if (!edgeExecuted) {
@@ -261,11 +245,6 @@ class spec_class {
             // Try to execute an edge for each event.
             var edgeExecuted = false;
 
-            // Event "dispense".
-            edgeExecuted |= this.execEdge5();
-
-            // Event "openDoor".
-            edgeExecuted |= this.execEdge6();
 
             // Stop if no edge was executed.
             if (!edgeExecuted) {
@@ -357,124 +336,12 @@ class spec_class {
     }
 
     /**
-     * Execute code for edge with index 0 and event "insertCoin".
+     * Execute code for edge with index 0 and event "coin.land".
      *
      * @return 'true' if the edge was executed, 'false' otherwise.
      */
     execEdge0() {
-
-        if (this.doInfoPrintOutput) this.printOutput(1, true);
-        if (this.doInfoEvent) this.infoEvent(1, true);
-
-        spec.coin_collector_coins_ = specUtils.addInt(spec.coin_collector_coins_, 1);
-
-        if (this.doInfoEvent) this.infoEvent(1, false);
-        if (this.doInfoPrintOutput) this.printOutput(1, false);
-        if (this.doStateOutput || this.doTransitionOutput) this.log('');
-        return true;
-    }
-
-    /**
-     * Execute code for edge with index 1 and event "refill".
-     *
-     * @return 'true' if the edge was executed, 'false' otherwise.
-     */
-    execEdge1() {
-        var guard = (spec.detergent_dispenser_) == (spec.specEnum._isEmpty);
-
-        if (!guard) {
-            return false;
-        }
-
-        if (this.doInfoPrintOutput) this.printOutput(3, true);
-        if (this.doInfoEvent) this.infoEvent(3, true);
-
-        spec.detergent_dispenser_ = spec.specEnum._full;
-
-        if (this.doInfoEvent) this.infoEvent(3, false);
-        if (this.doInfoPrintOutput) this.printOutput(3, false);
-        if (this.doStateOutput || this.doTransitionOutput) this.log('');
-        return true;
-    }
-
-    /**
-     * Execute code for edge with index 2 and event "returnCoin".
-     *
-     * @return 'true' if the edge was executed, 'false' otherwise.
-     */
-    execEdge2() {
-        var guard = (spec.coin_collector_coins_) > (0);
-
-        if (!guard) {
-            return false;
-        }
-
-        if (this.doInfoPrintOutput) this.printOutput(4, true);
-        if (this.doInfoEvent) this.infoEvent(4, true);
-
-        spec.coin_collector_coins_ = specUtils.subtractInt(spec.coin_collector_coins_, 1);
-
-        if (this.doInfoEvent) this.infoEvent(4, false);
-        if (this.doInfoPrintOutput) this.printOutput(4, false);
-        if (this.doStateOutput || this.doTransitionOutput) this.log('');
-        return true;
-    }
-
-    /**
-     * Execute code for edge with index 3 and event "select40".
-     *
-     * @return 'true' if the edge was executed, 'false' otherwise.
-     */
-    execEdge3() {
-        var guard = ((spec.coin_collector_coins_) > (0)) && (((spec.washer_) == (spec.specEnum._ready)) && ((specUtils.equalObjs(spec.coin_collector_coins_, 2)) && ((spec.detergent_dispenser_) == (spec.specEnum._full))));
-
-        if (!guard) {
-            return false;
-        }
-
-        if (this.doInfoPrintOutput) this.printOutput(5, true);
-        if (this.doInfoEvent) this.infoEvent(5, true);
-
-        spec.coin_collector_coins_ = 0;
-        spec.washer_ = spec.specEnum._washAt40;
-
-        if (this.doInfoEvent) this.infoEvent(5, false);
-        if (this.doInfoPrintOutput) this.printOutput(5, false);
-        if (this.doStateOutput || this.doTransitionOutput) this.log('');
-        return true;
-    }
-
-    /**
-     * Execute code for edge with index 4 and event "select90".
-     *
-     * @return 'true' if the edge was executed, 'false' otherwise.
-     */
-    execEdge4() {
-        var guard = ((spec.coin_collector_coins_) > (3)) && (((spec.washer_) == (spec.specEnum._ready)) && ((specUtils.equalObjs(spec.coin_collector_coins_, 3)) && ((spec.detergent_dispenser_) == (spec.specEnum._full))));
-
-        if (!guard) {
-            return false;
-        }
-
-        if (this.doInfoPrintOutput) this.printOutput(6, true);
-        if (this.doInfoEvent) this.infoEvent(6, true);
-
-        spec.coin_collector_coins_ = 0;
-        spec.washer_ = spec.specEnum._washAt90;
-
-        if (this.doInfoEvent) this.infoEvent(6, false);
-        if (this.doInfoPrintOutput) this.printOutput(6, false);
-        if (this.doStateOutput || this.doTransitionOutput) this.log('');
-        return true;
-    }
-
-    /**
-     * Execute code for edge with index 5 and event "dispense".
-     *
-     * @return 'true' if the edge was executed, 'false' otherwise.
-     */
-    execEdge5() {
-        var guard = ((spec.detergent_dispenser_) == (spec.specEnum._full)) && (((spec.washer_) == (spec.specEnum._washAt90)) || ((spec.washer_) == (spec.specEnum._washAt40)));
+        var guard = ((spec.coin_) == (spec.specEnum._air)) && ((spec.outcome_) == (spec.specEnum._unknown));
 
         if (!guard) {
             return false;
@@ -483,11 +350,11 @@ class spec_class {
         if (this.doInfoPrintOutput) this.printOutput(0, true);
         if (this.doInfoEvent) this.infoEvent(0, true);
 
-        spec.detergent_dispenser_ = spec.specEnum._isEmpty;
-        if ((spec.washer_) == (spec.specEnum._washAt90)) {
-            spec.washer_ = spec.specEnum._washing90;
-        } else if ((spec.washer_) == (spec.specEnum._washAt40)) {
-            spec.washer_ = spec.specEnum._washing40;
+        spec.coin_ = spec.specEnum._ground;
+        if ((spec.outcome_) == (spec.specEnum._unknown)) {
+            spec.outcome_ = spec.specEnum._heads;
+        } else if ((spec.outcome_) == (spec.specEnum._unknown)) {
+            spec.outcome_ = spec.specEnum._tails;
         }
 
         if (this.doInfoEvent) this.infoEvent(0, false);
@@ -497,12 +364,40 @@ class spec_class {
     }
 
     /**
-     * Execute code for edge with index 6 and event "openDoor".
+     * Execute code for edge with index 1 and event "coin.pick_up".
      *
      * @return 'true' if the edge was executed, 'false' otherwise.
      */
-    execEdge6() {
-        var guard = ((spec.washer_) == (spec.specEnum._ready)) || (((spec.washer_) == (spec.specEnum._washing90)) || ((spec.washer_) == (spec.specEnum._washing40)));
+    execEdge1() {
+        var guard = ((spec.coin_) == (spec.specEnum._ground)) && (((spec.outcome_) == (spec.specEnum._heads)) || ((spec.outcome_) == (spec.specEnum._tails)));
+
+        if (!guard) {
+            return false;
+        }
+
+        if (this.doInfoPrintOutput) this.printOutput(1, true);
+        if (this.doInfoEvent) this.infoEvent(1, true);
+
+        spec.coin_ = spec.specEnum._hand;
+        if ((spec.outcome_) == (spec.specEnum._heads)) {
+            spec.outcome_ = spec.specEnum._unknown;
+        } else if ((spec.outcome_) == (spec.specEnum._tails)) {
+            spec.outcome_ = spec.specEnum._unknown;
+        }
+
+        if (this.doInfoEvent) this.infoEvent(1, false);
+        if (this.doInfoPrintOutput) this.printOutput(1, false);
+        if (this.doStateOutput || this.doTransitionOutput) this.log('');
+        return true;
+    }
+
+    /**
+     * Execute code for edge with index 2 and event "coin.toss".
+     *
+     * @return 'true' if the edge was executed, 'false' otherwise.
+     */
+    execEdge2() {
+        var guard = (spec.coin_) == (spec.specEnum._hand);
 
         if (!guard) {
             return false;
@@ -511,13 +406,7 @@ class spec_class {
         if (this.doInfoPrintOutput) this.printOutput(2, true);
         if (this.doInfoEvent) this.infoEvent(2, true);
 
-        if ((spec.washer_) == (spec.specEnum._ready)) {
-            spec.washer_ = spec.specEnum._ready;
-        } else if ((spec.washer_) == (spec.specEnum._washing90)) {
-            spec.washer_ = spec.specEnum._ready;
-        } else if ((spec.washer_) == (spec.specEnum._washing40)) {
-            spec.washer_ = spec.specEnum._ready;
-        }
+        spec.coin_ = spec.specEnum._air;
 
         if (this.doInfoEvent) this.infoEvent(2, false);
         if (this.doInfoPrintOutput) this.printOutput(2, false);
@@ -539,9 +428,8 @@ class spec_class {
         this.svgInEvent = -1;
 
         // CIF model state variables.
-        spec.coin_collector_coins_ = 0;
-        spec.detergent_dispenser_ = spec.specEnum._isEmpty;
-        spec.washer_ = spec.specEnum._ready;
+        spec.coin_ = spec.specEnum._hand;
+        spec.outcome_ = spec.specEnum._unknown;
     }
 
     /**
@@ -661,9 +549,8 @@ class spec_class {
      */
     getStateText() {
         var state = specUtils.fmt('time=%s', spec.time);
-        state += specUtils.fmt(', coin_collector.coins=%s', specUtils.valueToStr(spec.coin_collector_coins_));
-        state += specUtils.fmt(', detergent_dispenser=%s', specUtils.valueToStr(spec.detergent_dispenser_));
-        state += specUtils.fmt(', washer=%s', specUtils.valueToStr(spec.washer_));
+        state += specUtils.fmt(', coin=%s', specUtils.valueToStr(spec.coin_));
+        state += specUtils.fmt(', outcome=%s', specUtils.valueToStr(spec.outcome_));
         return state;
     }
 

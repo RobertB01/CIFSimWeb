@@ -1,29 +1,37 @@
 function drawAutomaton(automaton, container) {
-    const nodes = automaton.locations.map(loc => {
-        // The display label is truncated to 15 characters
-        const displayLabel = loc.name 
-            ? (loc.name.length > 15 ? loc.name.slice(0, 15) + "..." : loc.name)
-            : "   ";
-    
-        return {
-            id: loc.id,
-            label: "\u00A0" + displayLabel + "\u00A0",       // Visible label in the graph
-            fullName: loc.name,        // Store the untruncated name here
-            color: { border: "black" },
-            borderWidth: 2,
-            shape: "ellipse",
-            shapeProperties: loc.marked ? { borderDashes: [5, 5] } : {}
-        };
-    });
-    
+    const nodes = automaton.locations.map(loc => ({
+        id: loc.id,
+        label: loc.name
+            ? loc.name.length > 15
+                ? loc.name.slice(0, 15) + "..."
+                : loc.name
+            : "   ",
+        color: {
+            border: "black"
+        },
+        borderWidth: 2,
+        shape: "ellipse",
+        shapeProperties: loc.marked ? { borderDashes: [5, 5] } : {},
+        shadow: loc.initial
+            ? {
+                enabled: true,
+                color: "orange",
+                size: 6,
+                x: 0,
+                y: 0
+            }
+            : false
+    }));
 
     const selfLoopTracker = {};
     const hasOnlySelfLoops = automaton.edges.every(edge => edge.from === edge.to);
+    if (hasOnlySelfLoops) {
+        console.log(`Automaton ${automaton.name} has only self-loops.`);
+    }
 
-    // Store this information globally so highlightCurrentState() can access it
+
     if (!window.automatonProperties) window.automatonProperties = {};
     window.automatonProperties[automaton.name] = { hasOnlySelfLoops };
-    const nodeLoopTracker = {};
 
     const edges = automaton.edges.map(edge => {
         const isSelfLoop = edge.from === edge.to;
@@ -36,103 +44,12 @@ function drawAutomaton(automaton, container) {
         }
 
         const selfLoopIndex = isSelfLoop ? selfLoopTracker[edge.from] : 0;
-        let event;
+        const event = automaton.events.find(event => event.id === edge.event);
+        const eventName = event?.name || "";
+        const isControllable = event?.controllable !== false;
 
+        const isPrimarySelfLoop = isSelfLoop && selfLoopIndex === 1;
 
-        let eventName;
-        let fullyQualifiedName;
-        let eventObj;
-        
-        switch (edge.eventType) {
-            case 'cross-automaton':
-                const crossAutomaton = parsedData.automata.find(a => a.name === edge.eventAutomaton);
-                const crossEvent = crossAutomaton.events.find(e => e.id === edge.event);
-                eventObj = crossEvent;
-                // Prefix the event name with the declaring automaton's name
-                eventName = crossEvent.name || "Unnamed Event";
-                fullyQualifiedName = `${crossAutomaton.name}.${eventName}`;
-                eventName = fullyQualifiedName
-                //console.log("Fully Qualified Name for Cross Automaton:", fullyQualifiedName);
-
-                break;
-
-            case 'owned':
-                // Find the event in the current automaton
-                const ownedEvent = automaton.events.find(e => e.id === edge.event);
-                eventObj = ownedEvent;
-                //console.log("Owned Event ID:", edge.event);
-                //console.log("Owned Event:", ownedEvent);
-
-                if (ownedEvent) {
-                    // Use the event name without any prefix
-                    eventName = ownedEvent.name || "Unnamed Event";
-                    fullyQualifiedName = `${automaton.name}.${eventName}`;
-                    //console.log("Fully Qualified Name for Owned Event:", fullyQualifiedName);
-                } else {
-                    // Handle case where owned event is not found
-                    eventName = "Unnamed Event";
-                    fullyQualifiedName = "Unnamed Event";
-                    console.warn(`Owned event with ID ${edge.event} not found in automaton ${automaton.name}`);
-                }
-                break;
-
-            case 'global':
-                // Find the event in the global event map
-                const globalEvent = globalEventMap[edge.event];
-                eventObj = globalEvent;
-                //console.log("Global Event ID:", edge.event);
-                //console.log("Global Event:", globalEvent);
-
-                if (globalEvent) {
-                    // Use the event name without any prefix
-                    eventName = globalEvent.name || "Unnamed Event";
-                    fullyQualifiedName = eventName;
-                } else {
-                    // Handle case where global event is not found
-                    eventName = "Unnamed Event";
-                    fullyQualifiedName = "Unnamed Event";
-                    console.warn(`Global event with ID ${edge.event} not found.`);
-                }
-                break;
-        }
-
-        //console.log("Final Event Name:", fullyQualifiedName);
-        //console.log("eventname", eventName)
-
-
-        const isControllable = eventObj?.controllable === true;
-        const edgeIndex = automaton.edges.filter(e => e.from === edge.from && e.to === edge.to).indexOf(edge);
-
-    
-        
-
-
-        let isPrimarySelfLoop = false;
-
-        if (isSelfLoop) {
-            if (!nodeLoopTracker[edge.from]) {
-                nodeLoopTracker[edge.from] = {
-                    foundFirstControllable: false,
-                    foundFirstUncontrollable: false
-                };
-            }
-
-            
-            // Initialize if necessary
-            const categoryKey = edge.controllable ? "controllable" : "uncontrollable";
-            //console.log(categoryKey);
-            // Check if we found first controllable or uncontrollable for *this node*
-            if (edge.controllable && !nodeLoopTracker[edge.from].foundFirstControllable) {
-                nodeLoopTracker[edge.from].foundFirstControllable = true;
-                isPrimarySelfLoop = true;
-            }
-            if (!edge.controllable && !nodeLoopTracker[edge.from].foundFirstUncontrollable) {
-                nodeLoopTracker[edge.from].foundFirstUncontrollable = true;
-                isPrimarySelfLoop = true;
-            }
-
-        }
-        //console.log(isPrimarySelfLoop)
         let edgeOptions = {
             id: edge.id,
             from: edge.from,
@@ -140,22 +57,16 @@ function drawAutomaton(automaton, container) {
             guard: edge.guard,
             updates: edge.updates,
             guardExpression: edge.guardExpression,
-            label: `\u00A0${eventName}\u00A0`,
-            full_label: fullyQualifiedName,
+            label: eventName,
             arrows: "to",
             color: isPrimarySelfLoop
                 ? { color: "black", highlight: "#000000", inherit: false }
-                : { color: "black", highlight: "rgba(255, 255, 255, 0)", inherit: true},
+                : { color: "rgba(0,0,0,0)", highlight: "rgba(0,0,0,0)", inherit: false },
             width: isPrimarySelfLoop ? 3 : 0.1,
             font: {
-                align: 'horizontal', 
-                size: 14,
-                color:"black",
-                strokeWidth: 5,
-                strokeColor: "#f8f8f8"
+                align: 'horizontal', size: 14
             },
             dashes: isControllable ? false : true,
-            controllable: isControllable,
             smooth: isSelfLoop
                 ? {
                     type: "cubicBezier",
@@ -163,15 +74,13 @@ function drawAutomaton(automaton, container) {
                 }
                 : {
                     type: "curvedCW",
-                    roundness: 0.3 + (edgeIndex * 0.3)
+                    roundness: 0.3
                 },
-            isPrimarySelfLoop: isPrimarySelfLoop,
-            isSelfLoop: isSelfLoop,
             selfReference: isSelfLoop
                 ? {
-                    size: 20 + (selfLoopIndex * 18),
+                    size: 20 + (selfLoopIndex * 15),
                     angle: Math.PI / 2,
-                    offset: 100
+                    offset: 600
                 }
                 : undefined
         };
@@ -179,27 +88,11 @@ function drawAutomaton(automaton, container) {
         return edgeOptions;
     });
 
-
-    // Find the maximum number of self-loops for any single location
-    const maxSelfLoops = Math.max(...Object.values(selfLoopTracker), 0);
-    //console.log(`Max self-loops per location in automaton ${automaton.name}:`, maxSelfLoops);
-
-
-
-
     const automatonContainer = document.createElement("div");
     automatonContainer.className = "automaton-container";
 
-    // Base size adjustments; these may be overridden if only self-loops exist
-    automatonContainer.style.width = `${150 + automaton.locations.length * 30}px`;
-    automatonContainer.style.height = `${161.72 + automaton.locations.length * 20 + maxSelfLoops * 18}px`;
-
-
-
-    automatonContainer.id = automaton.name  + "-div";
-
-
-
+    automatonContainer.style.width = `${350 + automaton.locations.length * 40}px`;
+    automatonContainer.style.height = `200px`;
 
     const automatonLabel = Object.assign(document.createElement("b"), {
         className: "automaton-label",
@@ -224,7 +117,7 @@ function drawAutomaton(automaton, container) {
 
             monitordisplay.append(
                 Object.assign(document.createElement("img"), {
-                    src: "monitor-icon.png", // Replace with your PNG path
+                    src: "monitor-icon.png", 
                     alt: "Monitor Icon",
                     className: "monitor-icon"
                 }),
@@ -248,51 +141,22 @@ function drawAutomaton(automaton, container) {
     container.appendChild(automatonContainer);
 
     if (hasOnlySelfLoops) {
-        networkContainer.style.display = "none"; // Hide the network visualization
+        networkContainer.style.display = "none"; 
 
-        // Create event list container
         const eventListContainer = document.createElement("div");
         eventListContainer.className = "event-list-container";
         eventListContainer.id = `eventListContainer_${automaton.name}`;
 
         let maxTextWidth = 0;
 
-        // Loop through edges and add event items
         automaton.edges.forEach(edge => {
-            let eventName;
-
-            switch (edge.eventType) {
-                case 'cross-automaton':
-                    const crossAutomaton = parsedData.automata.find(a => a.name === edge.eventAutomaton);
-                    const crossEvent = crossAutomaton.events.find(e => e.id === edge.event);
-                    // Prefix the event name with the declaring automaton's name
-
-                    eventName = crossEvent.name || "Unnamed Event";
-                    let fullyQualifiedName = `${crossAutomaton.name}.${eventName}`;
-                    eventName = fullyQualifiedName
-                break;
-
-                case 'global':
-                    console.log("isglobal")
-                    let globalEvent = globalEventMap[edge.event];
-                    eventName = globalEvent.name;
-                break;
-
-                case 'owned':
-                    let event = automaton.events.find(e => e.id === edge.event);
-                    eventName = event ? `${automaton.name}.${event.name}` : "Unnamed Event";
-                break;
-
-
-            }
-
-           
+            const event = automaton.events.find(e => e.id === edge.event);
+            const eventName = event?.name || "Unnamed Event";
 
             const eventItem = document.createElement("div");
-            eventItem.className = "event-item"; // Class for styling
+            eventItem.className = "event-item"; 
             eventItem.textContent = eventName;
 
-            // Attach data attribute for later reference
             eventItem.setAttribute('data-event-label', eventName);
             eventItem.setAttribute('data-automaton-name', automaton.name);
 
@@ -300,20 +164,17 @@ function drawAutomaton(automaton, container) {
                 .filter(otherName => otherName !== automaton.name)
                 .filter(otherName => {
                     const otherEdges = automatonEdges[otherName]?.get() || [];
-                    return otherEdges.some(otherEdge => otherEdge.full_label === eventName);
+                    return otherEdges.some(otherEdge => otherEdge.label === eventName);
                 });
 
-
-
-                const tooltipContent = `
-                Event: ${eventName}`
-                + (edge.guard ? `\n    Guard: ${edge.guardExpression}` : "")
-                + (edge.updates?.length ? `\n    Update: ${edge.updates.map(upd => upd.updateExpression).join(", ")}` : "")
-                + (syncWith.length > 0 ? `\n    Syncs with: ${syncWith.join(", ")}` : "");
-            
+            const tooltipContent = `
+                Event: ${eventName}
+                Guard: ${edge.guard ? `${edge.guardExpression}` : "-"}
+                Update: ${edge.updates?.length ? edge.updates.map(upd => `${upd.updateExpression}`).join(", ") : "-"}
+                Syncs with: ${syncWith.length > 0 ? syncWith.join(", ") : "-"}
+            `;
             eventItem.title = tooltipContent;
 
-            // Temporarily append to measure width
             document.body.appendChild(eventItem);
             const textWidth = eventItem.offsetWidth;
             maxTextWidth = Math.max(maxTextWidth, textWidth);
@@ -325,7 +186,7 @@ function drawAutomaton(automaton, container) {
         const nodeRect = document.createElement("div");
         const numEvents = automaton.edges.length;
 
-        nodeRect.className = "node-rect"; // Class for styling
+        nodeRect.className = "node-rect"; 
         nodeRect.textContent = "";
 
         eventListContainer.style.width = `${maxTextWidth + 50}px`;
@@ -334,20 +195,10 @@ function drawAutomaton(automaton, container) {
         automatonContainer.appendChild(eventListContainer);
         automatonContainer.appendChild(nodeRect);
 
-        // Adjust the container size based on content
         automatonContainer.style.width = `${maxTextWidth + 150}px`;
         
         automatonContainer.style.height = `${numEvents * 25 + 150}px`;
-        eventListContainer.addEventListener('click', function (evt) {
-            const clickedItem = evt.target.closest('.event-item');
-            if (clickedItem) {
-                const eventLabel = clickedItem.getAttribute('data-event-label');
-                console.log("Event item clicked:", eventLabel); // debug log
-                selectEdgeByLabel(eventLabel, automaton.name);
-                
 
-            }
-        });
     }
 
     const data = {
@@ -358,95 +209,61 @@ function drawAutomaton(automaton, container) {
     automatonNodes[automaton.name] = data.nodes;
     automatonEdges[automaton.name] = data.edges;
 
-    const baseOptions = {
-        interaction: { dragNodes: true, selectConnectedEdges: false },
-        edges: {
-          smooth: { type: "curvedCW", roundness: 0.2 },
-          font: { align: "middle", face: "Tahoma" },
-          arrows: { to: { enabled: true, scaleFactor: 0.8 } },
-
-        },
-        nodes: { shape: "ellipse", font: { size: 16, face: "Tahoma" } }
-      };
-      
-
-    
-    // Conditionally add layout/physics based on node count
-    if (automaton.locations.length > 10) {
-        Object.assign(baseOptions, {
-            layout: {},
-            physics: {
-                enabled: true,
-                solver: "repulsion",
-                stabilization: { iterations: 100 }
+    const options = {
+        layout: {
+            hierarchical: {
+                direction: "UD",
+                sortMethod: "directed",
+                nodeSpacing: 150,
+                levelSeparation: 200
             }
-        });
-        // Override the default smooth setting so that edges are straight.
-        Object.assign(baseOptions.edges, {
-            smooth: false
-        });
-    } else {
-        Object.assign(baseOptions, {
-            layout: {
-                hierarchical: {
-                    direction: "UD",
-                    sortMethod: "directed",
-                    nodeSpacing: 150,
-                    levelSeparation: 200
-                }
+        },
+        physics: {
+            enabled: false
+        },
+        interaction: {
+            dragNodes: true,
+            selectConnectedEdges: false
+        },
+        edges: {
+            smooth: {
+                type: "curvedCW",
+                roundness: 0.2
             },
-            physics: { enabled: false }
-        });
-        automatonContainer.style.height = `${161.72 + Math.pow(2, automaton.locations.length) * 0.86 + maxSelfLoops * 18}px`;
-        automatonContainer.style.width = `${150 + automaton.locations.length * 100}px`;
-    }
-    const network = new vis.Network(networkContainer, data, baseOptions);
+            font: { align: "middle" },
+            arrows: {
+                to: { enabled: true, scaleFactor: 1.0 }
+            }
+        },
+        nodes: {
+            shape: 'ellipse',
+            font: { size: 16, face: 'arial' }
+        }
+    };
 
+    const network = new vis.Network(networkContainer, data, options);
 
-
-    // Attach the listener on the newly created network
-    // network.on("selectEdge", (params) => {
-    //     console.log("selectEdge event fired!", params);
-    //     const clickedEdgeId = params.edges[0];
-    //     // automatonEdges[automaton.name] is the Vis DataSet:
-    //     const clickedEdge = automatonEdges[automaton.name].get(clickedEdgeId);
-    //     if (clickedEdge && !clickedEdge.isPrimarySelfLoop && clickedEdge.isSelfLoop) {
-    //         network.unselectAll();  // Clears all selections
-
-    //     }
-    // });
     automatonNetworks[automaton.name] = network;
-    attachEdgeSelectionListener(network, automaton.name);
-
-
-    addCanvasOverlay(automaton, automaton.name, networkContainer, network);
-
-
 }
 
 
 function updateVariableDisplay() {
     automatonNames.forEach(automatonName => {
-        //console.log(automatonName);
         const variableDisplay = document.querySelector(`#variableDisplay_${automatonName}`);
         variableDisplay.innerHTML = "";
-        const variables = getVariables(spec).filter(variable => 
-            variable.name.startsWith(`${automatonName}_`) && variable.name !== `${automatonName}_`
-        );
-        
-        //console.log(variables)
+        const variables = getVariables(spec).filter(variable => {
+            return variable.name.startsWith(`${automatonName}_`) && variable.name !== `${automatonName}_`;
+        });
 
-        // Build a multi-line string of variables
         let variableText = "";
         variables.forEach((variable, index) => {
             let variableName = variable.name.replace(`${automatonName}_`, "").replace("_", "");
             variableText += `${variableName} = ${variable.value}`;
             if (index < variables.length - 1) {
-                variableText += "\n"; // Add a new line for the next variable
+                variableText += "\n"; 
             }
         });
 
-        // Create a div that preserves whitespace so that line breaks are shown
         const variableItem = document.createElement("div");
         variableItem.style.whiteSpace = "pre";
         variableItem.textContent = variableText;
@@ -457,10 +274,9 @@ function updateVariableDisplay() {
 
 
 function highlightCurrentState() {
-     availableEvents = getAvailableEdges(spec);
+    let availableEvents = getAvailableEdges(spec);
 
     automatonNames.forEach(automatonName => {
-
         const currentStateProperty = `spec.${automatonName}_`;
         let currentStateValue;
         try {
@@ -478,41 +294,20 @@ function highlightCurrentState() {
         const nodes = automatonNodes[automatonName];
         const edges = automatonEdges[automatonName];
         const network = automatonNetworks[automatonName];
-        
+
         if (nodes && edges && network) {
-            // Reset node colors
+            // Reset colors
             nodes.forEach(node => {
                 nodes.update({ id: node.id, color: { background: "white" } });
             });
 
-            // Reset edge colors
             edges.forEach(edge => {
-                const isSelfLoop = (edge.from === edge.to) || (edge.selfReference !== undefined);
-
-                if (isSelfLoop) {
-                    edges.update({
-                        id: edge.id,
-                        color: edge.isPrimarySelfLoop
-                            ? { color: "#5c5c5c", highlight: "#000000", inherit: false }
-                            : { color: "rgba(0,0,0,0)", highlight: "rgba(255, 255, 255, 0)", inherit: true },
-                        shadow: { enabled: false },
-                        width: 2,
-                        font: {
-                            background: "transparent",
-                            color: "black",
-                            strokeWidth: 5,
-                            strokeColor: "#f8f8f8"
-                        }
-                    });
-                } else {
-                    edges.update({
-                        id: edge.id,
-                        color: { color: "#5c5c5c", highlight: "black" },
-                        shadow: { enabled: false },
-                        font: { color: "black", strokeWidth: 5, strokeColor: "#f8f8f8" },
-                        width: 2
-                    });
-                }
+                edges.update({
+                    id: edge.id,
+                    color: { color: "black", highlight: "black" },
+                    shadow: { enabled: false },
+                    width: 2,
+                });
                 delete edge.title;
             });
 
@@ -521,7 +316,7 @@ function highlightCurrentState() {
                 currentNode = nodes.get()[0];
             } else {
                 currentNode = nodes.get({
-                    filter: node => (node.fullName === currentStateValue || (node.fullName === " " && currentStateValue === " "))
+                    filter: node => (node.label === currentStateValue || (node.label === " " && currentStateValue === " "))
                 })[0];
             }
 
@@ -534,74 +329,36 @@ function highlightCurrentState() {
                     });
 
                     originatingEdges.forEach(edge => {
-                        const edgeFQN = edge.full_label || edge.label;
-                        const isAvailable = availableEvents.some(ev => ev === edgeFQN);
-                        // If the event is in purpleEvents, override red colors with purple.
+                        const edgeLabel = edge.label.includes(".") ? edge.label.split(".").pop() : edge.label;
 
+                        const isAvailable = availableEvents.some(event => {
+                            const eventLabel = event.includes(".") ? event.split(".").pop() : event;
+                            return eventLabel === edgeLabel;
+                        });
 
-
-                        let newColor = isAvailable ? "darkgreen" : "darkred";
+                        const newColor = isAvailable ? "darkgreen" : "darkred";
                         const shadowSettings = isAvailable
                             ? { enabled: true, color: "lime", size: 8, x: 0, y: 0 }
                             : { enabled: true, color: "red", size: 8, x: 0, y: 0 };
-
-                            const baseLabel = edge.label.replace(/\s*(?::|🚫\s*\d+)\s*$/, "");
-
-                            if (restrictionOverlayChecked && purpleEvents && purpleEvents.some(item => item.eventName === edgeFQN)) {
-                                if (!isAvailable) {
-                                    // Override color and shadow for blocked edges
-                                    newColor = "purple";
-                                    shadowSettings.color = "purple";
-                                    let newLabel = baseLabel;
-
-                                    // Add blocking icon and count only if restrictionList has multiple items
-                                    if (restrictionList.length > 1) {
-                                        const purpleItem = purpleEvents.find(item => item.eventName === edgeFQN);
-                                        newLabel = `${baseLabel} 🚫${purpleItem.blockCount}`;
-                                    }
-
-                                    // Update the edge only if the label or color has changed
-                                    if (edge.label !== newLabel || edge.color !== newColor) {
-                                        edges.update({ 
-                                            id: edge.id, 
-                                            label: newLabel, 
-                                            color: newColor, 
-                                            shadow: shadowSettings 
-                                        });
-                                    }
-                                }
-                            } else {
-                                // Reset the label to baseLabel if conditions are not met
-                                if (edge.label !== baseLabel) {
-                                    edges.update({ id: edge.id, label: baseLabel });
-                                }
-                            }
 
                         const syncWith = automatonNames
                             .filter(otherName => otherName !== automatonName)
                             .filter(otherName => {
                                 const otherEdges = automatonEdges[otherName].get();
-                                return otherEdges.some(otherEdge => otherEdge.full_label === edge.full_label);
+                                return otherEdges.some(otherEdge => otherEdge.label === edge.label);
                             });
 
-                        const tooltipContent = `Event: ${edge.label}`
-                            + (edge.guard ? `\nGuard: ${edge.guardExpression}` : "")
-                            + (edge.updates.length ? `\nUpdate: ${edge.updates.map(upd => upd.updateExpression).join(", ")}` : "")
-                            + (syncWith.length > 0 ? `\nSyncs with: ${syncWith.join(", ")}` : "");
-
-                        const displayEdge = edge.isPrimarySelfLoop || !edge.isSelfLoop;
+                        const tooltipContent = `Event: ${edge.label}
+                        Guard: ${edge.guard ? ` ${edge.guardExpression}` : "-"}
+                        Update: ${edge.updates.length ? edge.updates.map(upd => `${upd.updateExpression} `) : "-"}
+                        Syncs with: ${syncWith.length > 0 ? syncWith.join(", ") : "-"}`;
 
                         edges.update({
                             id: edge.id,
-                            color: displayEdge
-                                ? { color: newColor, highlight: newColor, inherit: false }
-                                : { color: "rgba(0,0,0,0)", highlight: "rgba(255, 255, 255, 0)", inherit: true },
+                            color: { color: newColor, highlight: newColor },
                             shadow: shadowSettings,
                             width: 2,
-                            title: tooltipContent,
-                            font: edge.isSelfLoop
-                                ? { background: newColor, color: "white", strokeWidth: 0, strokeColor: "transparent" }
-                                : { background: "transparent", color: "black", strokeWidth: 5, strokeColor: "#f8f8f8" }
+                            title: tooltipContent
                         });
                     });
 
@@ -614,67 +371,66 @@ function highlightCurrentState() {
                             if (clickedEdge && edgeIds.includes(clickedEdge.id)) {
                                 const selectedEdge = edges.get(params.edges[0]);
                                 if (selectedEdge) {
-                                    updateDropdownWithSelectedEvent(selectedEdge.full_label);
+                                    updateDropdownWithSelectedEvent(selectedEdge.label);
                                     const executeButton = document.getElementById("execute-event");
                                     if (executeButton) {
                                         executeButton.click();
                                     }
-                                    clearGuardOverlay();
                                 }
                             }
                         }
                     });
                 } else {
-                    // For automata with only self-loops, update the event list container...
+                   
                     const eventListContainer = document.getElementById(`eventListContainer_${automatonName}`);
                     if (eventListContainer) {
                         const eventItems = eventListContainer.querySelectorAll('.event-item');
                         eventItems.forEach(eventItem => {
+                            
                             eventItem.style.backgroundColor = "";
                             eventItem.style.color = "";
                             const eventLabel = eventItem.getAttribute('data-event-label');
-                            const isAvailable = availableEvents.some(event => event === eventLabel);
+                            const eventNameShort = eventLabel.includes(".") ? eventLabel.split(".").pop() : eventLabel;
+
+                            const isAvailable = availableEvents.some(event => {
+                                const eventLabelShort = event.includes(".") ? event.split(".").pop() : event;
+                                return eventLabelShort === eventNameShort;
+                            });
+
                             if (isAvailable) {
                                 eventItem.style.backgroundColor = "#00990a";
+                                eventItem.style.color = "black";
+                                eventItem.style.padding = "2px 10px"; 
+                            } else {
+                                eventItem.style.backgroundColor = "#910000";
                                 eventItem.style.color = "white";
                                 eventItem.style.padding = "2px 10px";
-                            } else {
-                                // Check if this event should be purple instead of red
-                                if (purpleEvents && purpleEvents.some(item => item.eventName === eventLabel)) {
-                                    eventItem.style.backgroundColor = "purple";
-                                    eventItem.style.color = "white";
-                                    eventItem.style.padding = "2px 10px";
-                                    } else {
-                                    eventItem.style.backgroundColor = "#910000";
-                                    eventItem.style.color = "white";
-                                    eventItem.style.padding = "2px 10px";
-                                }
                             }
                         });
 
+                        
                         if (!eventListContainer.dataset.dblclickAttached) {
                             eventListContainer.dataset.dblclickAttached = "true";
                             eventListContainer.addEventListener('dblclick', function (evt) {
                                 const closestEventItem = evt.target.closest('.event-item');
                                 if (closestEventItem) {
                                     const eventLabel = closestEventItem.getAttribute('data-event-label');
-                                    updateDropdownWithSelectedEvent(eventLabel);
+                                    const eventNameShort = eventLabel.includes(".") ? eventLabel.split(".").pop() : eventLabel;
+
+                                    updateDropdownWithSelectedEvent(eventNameShort);
                                     const executeButton = document.getElementById("execute-event");
                                     if (executeButton) {
                                         executeButton.click();
                                     }
-                                    clearGuardOverlay();
                                 }
                             });
                         }
                     }
                 }
             }
-
         }
     });
 }
-
 
 function synchronizeEventSelection(selectedEventLabel) {
     automatonNames.forEach(automatonName => {
@@ -693,7 +449,7 @@ function synchronizeEventSelection(selectedEventLabel) {
 
                 if (currentNode) {
                     const originatingEdges = edges.get({
-                        filter: edge => edge.from === currentNode.id && edge.full_label === selectedEventLabel
+                        filter: edge => edge.from === currentNode.id && edge.label === selectedEventLabel
                     });
 
                     const edgeIds = originatingEdges.map(edge => edge.id);
@@ -712,33 +468,6 @@ function updateDropdownWithSelectedEvent(selectedEventLabel) {
         if (options[i].value === selectedEventLabel || options[i].value.endsWith(selectedEventLabel)) {
             options[i].selected = true;
             return;
-        }
-    }
-}
-
-
-function selectEdgeByLabel(eventLabel, automatonName) {
-    const edges = automatonEdges[automatonName];
-    const network = automatonNetworks[automatonName];
-    if (edges && network) {
-        // Find matching edge(s)
-        const matchingEdges = edges.get({
-            filter: edge => {
-                const label = edge.full_label || edge.label;
-                return label === eventLabel;
-            }
-        });
-        if (matchingEdges && matchingEdges.length > 0) {
-            const edgeIds = matchingEdges.map(e => e.id);
-            // Select the matching edge(s) in the vis network
-            network.selectEdges(edgeIds);
-            const selectedEdge = automatonEdges[automatonName].get(edgeIds[0]);
-            if (selectedEdge) {
-                updateGuardOverlay(selectedEdge, automatonName);
-            }
-            console.log("Selected edge IDs:", edgeIds);
-        } else {
-            console.warn("No matching edge found for label:", eventLabel);
         }
     }
 }
